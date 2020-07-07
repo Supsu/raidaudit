@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <br><a class="btn btn-success" href="#" role="button">Update</a>
+  <br>
+<table class="table table-striped">
+  <tr>
+      <th>#</th>
+      <th>Nick</th>
+      <th>Class</th>
+      <th>Role</th>
+      <th>ilv</th>
+      <th>Weekly M+</th>
+      <th>r.io score</th>
+      <th>WCL performance</th>
+  </tr>
+  {% for i in data %}
+  <tr>
+      
+      {% for k in i %}
+      <td>{{k}}</td>
+      {% endfor %}
+  </tr>
+  {% endfor %}
+</table>
+<br>
+<h5>Most recent logs</h5>
+<table class="table table-striped">
+  <tr>
+    <th>Title</th>
+    <th>Date</th>
+    <th>Url</th>
+  </tr>
+
+  {% for row in logs %}
+    <tr>
+      {% for item in row  %}
+        <td>{{item}}</td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+
+</table>
+
+{% endblock %}
