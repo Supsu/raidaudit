@@ -20,7 +20,8 @@ def index():
 @app.route('/blog')
 @app.route('/blog/<id>')
 def blog():
-    return render_template('blog.html', sub=sub)
+    posts = backend.getBlog()
+    return render_template('blog.html', sub=sub, posts=posts)
 
 @app.route('/admin')
 def admin():

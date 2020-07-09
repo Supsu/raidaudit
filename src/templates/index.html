@@ -16,10 +16,14 @@
   </tr>
   {% for i in data %}
   <tr>
-      
-      {% for k in i %}
-      <td>{{k}}</td>
-      {% endfor %}
+      <td>{{loop.depth}}</td>
+      <td> {{ i["name"] }} </td>
+      <td> {{ i["Class"] }} </td>
+      <td> {{ i["Role"] }} </td>
+      <td> {{ i["ilv"] }} </td>
+      <td> {{ i["Weekly"] }} </td>
+      <td> {{ i["rio"] }} </td>
+      <td> {{ i["wcl"] }} </td>
   </tr>
   {% endfor %}
 </table>

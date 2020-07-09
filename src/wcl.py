@@ -34,7 +34,7 @@ class WCL:
 
         self._logRefreshTime = time.time()
 
-        return r.json()
+        return r.text
 
     def getPlayerAvg(self,player):
         #https://www.warcraftlogs.com:443/v1/rankings/character/supsu/stormscale/eu?metric=dps

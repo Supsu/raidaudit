@@ -24,8 +24,11 @@ class Backend:
 		"""
 		
 		data = self.db.getIndex()
-		
-		return data
+		listed = []
+		for item in data:
+			listed.append(item)
+
+		return listed
 		
 	def getBlog(self):
 		"""
@@ -40,7 +43,11 @@ class Backend:
 		Get most recent logs for guild from WCL
 		"""
 
-		data = self.wcl.getGuildLogs()
+		data = json.loads(self.wcl.getGuildLogs())
+
+		if "error" in data:
+			
+			data = [{"title": "Error!", "start": data["error"], "id": " "}]
 
 		return data
 
