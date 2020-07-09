@@ -1,21 +1,48 @@
+from db import Database
+from bnet import Bnet
+from rio import RIO
+from wcl import WCL
+import json
+
+
 class Backend:
+
+	db = ""
+	bnet = ""
+	rio = ""
+	wcl = ""
+
+	def __init__(self):
+		self.db = Database()
+		self.bnet = Bnet()
+		self.rio = RIO()
+		self.wcl = WCL()
 
 	def getView(self):
 		"""
-		Get data to displays
+		Get data for roster table
 		"""
 		
-		#placeholder
-		return [[1,"Surlo","Warlock","DPS",600,15,2000],[2,"Supsu","Death Knight","DPS", 400,12,1500]]
+		data = self.db.getIndex()
 		
+		return data
+		
+	def getBlog(self):
+		"""
+		Get blog posts
+		"""
+		data = self.db.getBlog()
+		return data
+
 
 	def getLogs(self):
 		"""
 		Get most recent logs for guild from WCL
 		"""
 
-		#placeholder
-		return [["Title1", "date", "http://warcraftlogs.com"], ["title2", "date2", "url2"]]
+		data = self.wcl.getGuildLogs()
+
+		return data
 
 	def updateView(self):
 		"""
@@ -47,4 +74,11 @@ class Backend:
 		"""
 		pass
 
+
+if __name__ == "__main__":
+	back = Backend()
+	print("Testing backend..")
+	print("getView")
+	for item in back.getView():
+		print(item["name"])
 

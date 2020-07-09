@@ -34,9 +34,9 @@
 
   {% for row in logs %}
     <tr>
-      {% for item in row  %}
-        <td>{{item}}</td>
-      {% endfor %}
+      <td> {{ row["title"] }} </td>
+      <td> {{ row["start"] }}</td>
+      <td> {{ row["id"] }}</td>
     </tr>
   {% endfor %}
 
