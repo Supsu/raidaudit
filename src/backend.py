@@ -22,11 +22,26 @@ class Backend:
 		"""
 		Get data for roster table
 		"""
+
+		def sorter(item):
+			roleprio = 0
+			if item["Role"] == "Tank":
+				roleprio = 5
+			elif item["Role"] == "Healer":
+				roleprio = 4
+			elif item["Role"] == "DPS":
+				roleprio = 3
+			else:
+				roleprio = 2
+
+			return (roleprio, item["name"])
 		
 		data = self.db.getIndex()
 		listed = []
 		for item in data:
 			listed.append(item)
+
+		listed = sorted(listed, key=sorter)
 
 		return listed
 		
