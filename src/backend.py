@@ -128,6 +128,12 @@ class Backend:
 			#TODO
 			return boolusr, boolpwd
 
+
+	def post(self, title, content):
+		r = self.db.postBlog(title, content)
+
+		return r
+
 		
 
 

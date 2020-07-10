@@ -1,6 +1,7 @@
 import pymongo
 from dotenv import load_dotenv
 import os
+import time
 
 class Database:
 
@@ -36,7 +37,10 @@ class Database:
     def getSettings(self):
         return self.db.settings.find_one()
 
-
+    def postBlog(self, title, content):
+        self.db.blog.insert_one({ "title": title, "content": content, "timestamp": time.strftime('%Y-%m-%d', time.localtime())})
+        #TODO error checking
+        return True
 
 if __name__ == "__main__":
     db = Database()

@@ -4,11 +4,15 @@
 
 {% for post in posts %}
 
-    <div class="panel panel-default">
-        <div class="panel-heading">{{ post["title"] }}</div>
-        <div class="panel-body">{{ post["content"] }}</div>
-        <div class="panel-footer"> <p>Posted: {{ post["timestamp"] }} </div>
-    </div>
+    <div class="card">
+        <div class="card-header">{{ post["title"] }}</div>
+        <div class="card-body">
+        <p class="card-text">{{ post["content"] }}</p>
+        <div class="card-footer text-muted">Posted: {{ post["timestamp"] }} </div>
+        {% if user %}
+        <div class="card-footer"><button class="btn btn-danger" type="button">Delete</button> </div>
+        {% endif %}
+        </div></div>
     <br>
     <br>
 

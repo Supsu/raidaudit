@@ -3,16 +3,18 @@
 {% block content %}
 
 <h3>Post a blog post</h3>
+<form action="post" method="POST">
 <div class="form-group">
     <label for="title">Title:</label>
-    <input type="text" class="form-control" id="title">
+    <input type="text" class="form-control" id="title" name="title">
 
 </div>
 <div class="form-group">
     <label for="post">Post:</label>
-    <textarea class="form-control" rows="8" id="post"></textarea>
+    <textarea class="form-control" rows="8" id="post" name="post"></textarea>
 </div>
-<button id="postnewblog" class="btn btn-primary">Post</button>
+    <button id="postnewblog" class="btn btn-primary" type="submit">Post</button>
+</form>
 <br>
 <br>
 <h3>Edit roster</h3>

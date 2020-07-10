@@ -40,6 +40,17 @@ def admin():
         return redirect(url_for('index'))
     
 
+@app.route('/post', methods=["POST"])
+def postblog():
+    print(request.form)
+    r=backend.post(request.form['title'], request.form['post'])
+    if r:
+        flash("Success!")
+    else:
+        flash("Failure!")
+        
+    return redirect(url_for('admin'))
+
 @app.route('/login', methods=['POST'])
 def login():
     username_exists = False
