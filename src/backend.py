@@ -27,13 +27,13 @@ class Backend:
 		def sorter(item):
 			roleprio = 0
 			if item["Role"] == "Tank":
-				roleprio = 5
+				roleprio = 1
 			elif item["Role"] == "Healer":
-				roleprio = 4
+				roleprio = 2
 			elif item["Role"] == "DPS":
 				roleprio = 3
 			else:
-				roleprio = 2
+				roleprio = 4
 
 			return (roleprio, item["name"])
 		
