@@ -11,8 +11,10 @@
       <th>Role</th>
       <th>ilv</th>
       <th>Weekly M+</th>
-      <th>r.io score</th>
-      <th>WCL performance</th>
+      <th>R.io score</th>
+      <th>Perf% (N)</th>
+      <th>Perf% (H)</th>
+      <th>Perf% (M)</th>
   </tr>
   {% for i in data %}
   <tr>
@@ -23,7 +25,9 @@
       <td> {{ i["ilv"] }} </td>
       <td> {{ i["Weekly"] }} </td>
       <td> {{ i["rio"] }} </td>
-      <td> {{ i["wcl"] }} </td>
+      <td> {{ i["wcln"] }} </td>
+      <td> {{ i["wclh"] }} </td>
+      <td> {{ i["wclm"] }} </td>
   </tr>
   {% endfor %}
 </table>

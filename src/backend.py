@@ -40,6 +40,8 @@ class Backend:
 		data = self.db.getIndex()
 		listed = []
 		for item in data:
+			# force weekly to display as int
+			item["Weekly"] = int(item["Weekly"])
 			listed.append(item)
 
 		listed = sorted(listed, key=sorter)
