@@ -1,0 +1,49 @@
+This project is built on MongoDB
+
+Inside Mongo the project uses DB "raidaudit", which
+has following collections inside:
+
+players && players_bnet
+These collections have manually added characters and
+characters added by battle.net integration
+
+{ 
+  "name": string 	-- Name of the character
+  "Class": string 	-- Class of the character
+  "Role": string	-- Tank, Healer or DPS
+  "ilv": float		-- Item level of the character
+  "Weekly": int		-- Highest weekly M+ dungeon character has
+				completed
+  "rio": float		-- Raider.io score
+  "wcln": float		-- WCL performance from normal
+  "wclh": float		-- WCL performance from heroic
+  "wclm": float		-- WCL performance from mythic
+}
+
+
+---------------
+
+
+blog
+This collection has blog posts for the blog page
+
+{
+  "title": string	-- Title of the post
+  "content": string	-- Content of the blog post
+  "timestamp": string	-- Timestamp in the format it will be displayed
+}
+
+
+---------------
+
+settings
+This collection has only one entry containing
+settings regarding the app. Please note that
+for now admin login information is stored as
+plain text.
+
+{
+  "updated": string	-- Timestamp of last update of the roster
+  "adminname": string	-- Username for admin login
+  "adminpwd": string	-- Password for admin login
+}
