@@ -3,6 +3,7 @@ from bnet import Bnet
 from rio import RIO
 from wcl import WCL
 import json
+import time
 
 
 class Backend:
@@ -63,6 +64,12 @@ class Backend:
 		if "error" in data:
 			
 			data = [{"title": "Error!", "start": data["error"], "id": " "}]
+
+		elif len(data) > 10:
+			data = data[0:10]
+
+		for row in data:
+			row["start"] = time.strftime('%Y-%m-%d', time.localtime(int(row["start"]/1000)))
 
 		return data
 
