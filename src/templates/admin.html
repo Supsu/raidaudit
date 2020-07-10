@@ -12,10 +12,41 @@
     <label for="post">Post:</label>
     <textarea class="form-control" rows="8" id="post"></textarea>
 </div>
-<button>Post</button>
+<button id="postnewblog" class="btn btn-primary">Post</button>
 <br>
 <br>
 <h3>Edit roster</h3>
--
+
+<div class="container">
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Character..
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Lisää uusi..</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Hahmo1</a>
+            <a class="dropdown-item" href="#">Hahmo2</a>
+            <a class="dropdown-item" href="#">Hahmo3</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name">
+        </div>
+        <div class="form-group">
+            <label for="role">Role:</label>
+            <input type="text" class="form-control" id="role">
+        </div>
+        <div class="form-group">
+            <label for="class">Class:</label>
+            <input type="text" class="form-control" id="class">
+        </div>
+    </div>
+    <button id="savechar" class="btn btn-primary">Save</button>
+  </div>
+ 
 
 {% endblock %}
