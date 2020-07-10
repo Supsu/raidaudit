@@ -8,6 +8,8 @@ class Database:
     dbport = ""
     client = ""
     db = ""
+    usr = ""
+    pwd = ""
     
 
     def __init__(self):
@@ -15,8 +17,10 @@ class Database:
 
         self.dburl = os.getenv("MONGOURL")
         self.dbport = int(os.getenv("MONGOPORT"))
+        self.usr = os.getenv("MONGOUSER")
+        self.pwd = os.getenv("MONGOPWD")
 
-        self.client = pymongo.MongoClient(self.dburl, self.dbport)
+        self.client = pymongo.MongoClient(self.dburl, self.dbport, username=self.usr, password=self.pwd)
         self.db = self.client.raidaudit
 
         print("Initialized connection to database " + self.db.name)

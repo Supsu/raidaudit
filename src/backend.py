@@ -105,6 +105,31 @@ class Backend:
 		"""
 		pass
 
+	def login(self, usr, pwd):
+		"""
+		Check login information
+		"""
+
+		settings = self.db.getSettings()
+
+		boolusr=False
+		boolpwd=False
+
+		# check admin credentials
+		if settings["adminname"] == usr:
+			boolusr=True
+		if settings["adminpwd"] == pwd:
+			boolpwd=True
+
+		if boolusr and boolpwd:
+			return boolusr, boolpwd
+		else:
+			#check additional login table for officers etc
+			#TODO
+			return boolusr, boolpwd
+
+		
+
 
 if __name__ == "__main__":
 	back = Backend()
@@ -112,4 +137,8 @@ if __name__ == "__main__":
 	print("getView")
 	for item in back.getView():
 		print(item["name"])
+
+	print("Testing login information")
+	print(back.login("supsu", "kalkkunafarmi"))
+	
 
