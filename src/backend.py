@@ -97,6 +97,36 @@ class Backend:
 		"""
 		Update raider rank characters from armory
 		"""
+
+		CLASSID = {
+			1: "Warrior",
+			2: "Paladin",
+			3: "Hunter",
+			4: "Rogue",
+			5: "Priest",
+			6: "Death Knight",
+			7: "Shaman",
+			8: "Mage",
+			9: "Warlock",
+			10: "Monk",
+			11: "Druid",
+			12: "Demon Hunter"
+		}
+
+		roster = self.bnet.getRoster()
+
+		for player in roster:
+			character = player[0]["character"]
+
+			name = player["character"]["name"]
+			print(name)
+			rank = player["character"]["rank"]
+			print(rank)
+			charclass = CLASSID[player["character"]["playable_class"]["id"]]
+			print(id)
+
+
+
 		pass
 
 	def updateDB(self):
@@ -139,12 +169,6 @@ class Backend:
 
 if __name__ == "__main__":
 	back = Backend()
-	print("Testing backend..")
-	print("getView")
-	for item in back.getView():
-		print(item["name"])
-
-	print("Testing login information")
-	print(back.login("supsu", "kalkkunafarmi"))
+	back.updateRoster()
 	
 

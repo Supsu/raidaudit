@@ -31,6 +31,9 @@ class Bnet:
 		self._locale = os.getenv("WOWLOCALE")
 		self._apiurl = "https://" + self._region + ".api.blizzard.com/"
 
+		print("BNETID " + self._id )
+		print("BNETSECRET " + self._secret )
+
 	def getAccessToken(self):
 		"""
 		Get access token with given id and secret
@@ -40,18 +43,15 @@ class Bnet:
 		
 		checkurl = "https://" + self._region + ".battle.net/oauth/check_token"
 		r = requests.post(checkurl, data={"token":self._token})
-		print(r.json())
 
-		if "error" not in r:
-			return self._token
+		#if "error" not in r:
+		#	return self._token
 		
 		print("Getting new access token for battle.net API")
 		# get new token
 		tokenurl = "https://"+ self._region +".battle.net/oauth/token"
 		r = requests.post(tokenurl, auth=(self._id, self._secret), data={"grant_type":"client_credentials"})
 		print(str(r.status_code))
-		#print("ID: " + self._id)
-		#print("SECRET: " + self._secret)
 		if str(r.status_code) != str(200):
 			print("ERROR " + str(r.status_code))
 			print("R: " + r)
@@ -68,14 +68,14 @@ class Bnet:
 		Gets guild roster from b.net API to automatically add raiders
 		"""
 		print("Getting roster..")
-		atoken = self.getAccessToken()
+		self._token = self.getAccessToken()
 		reqUrl = self._apiurl + "data/wow/guild/" + self._realm + "/" + self._guild + "/roster?namespace=" + self._namespace + "&locale=" + self._locale + "&access_token=" + self._token
 		
 		req = requests.get(reqUrl)
 		print(str(req.status_code))
-		reqjson = req.json()
+		#reqjson = req.json()
 
-		return reqjson
+		return req
 
 
 	def getCharacterProfile(self, charname, realm=None):

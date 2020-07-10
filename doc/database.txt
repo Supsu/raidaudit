@@ -3,7 +3,7 @@ This project is built on MongoDB
 Inside Mongo the project uses DB "raidaudit", which
 has following collections inside:
 
-players && players_bnet
+players && autoplayers
 These collections have manually added characters and
 characters added by battle.net integration
 

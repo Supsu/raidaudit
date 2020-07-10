@@ -42,6 +42,13 @@ class Database:
         #TODO error checking
         return True
 
+    def addPlayer(self, name, charclass, role, automated=False):
+        if automated:
+            self.db.autoplayers.insert_one( {"name": name, "Class": charclass, "Role": role, "ilv": 0.0, "Weekly": 0, "rio": 0.0, "wcln": 0.0, "wclh": 0.0, "wclm": 0.0} )
+        else:
+            self.db.players.insert_one( {"name": name, "Class": charclass, "Role": role, "ilv": 0.0, "Weekly": 0, "rio": 0.0, "wcln": 0.0, "wclh": 0.0, "wclm": 0.0} )
+            pass
+
 if __name__ == "__main__":
     db = Database()
     print("Testing db methods")
