@@ -1,1 +1,1 @@
-web: gunicorn raidaudit:wsgi
+web: gunicorn app:app
