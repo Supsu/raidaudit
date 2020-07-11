@@ -40,13 +40,13 @@ class Database:
 
     
     def getBlog(self):
-        return self.db.blog.find().sort("timestamp", pymongo.DESCENDING)
+        return self.db.blog.find().sort("id", pymongo.DESCENDING)
 
     def getSettings(self):
         return self.db.settings.find_one()
 
     def postBlog(self, title, content):
-        self.db.blog.insert_one({ "title": title, "content": content, "timestamp": time.strftime('%Y-%m-%d', time.localtime())})
+        self.db.blog.insert_one({ "title": title, "content": content, "timestamp": time.strftime('%Y-%m-%d', time.localtime()), "id": int(time.time())})
         #TODO error checking
         return True
 

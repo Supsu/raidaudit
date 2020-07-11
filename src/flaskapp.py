@@ -21,13 +21,20 @@ def index():
     return render_template('index.html', sub=sub, user=user, data=roster, logs=logs)
 
 @app.route('/blog')
-@app.route('/blog/<id>')
-def blog():
-    posts = backend.getBlog()
-    user = None
-    if 'username' in session:
-        user = session['username']
-    return render_template('blog.html', sub=sub,user=user, posts=posts)
+@app.route('/blog/<int:id>')
+def blog(id=None):
+    if id is None:
+        posts = backend.getBlog()
+        user = None
+        if 'username' in session:
+            user = session['username']
+        return render_template('blog.html', sub=sub,user=user, posts=posts, single=False)
+    else:
+        post = backend.getSingleBlog(id)
+        if 'username' in session:
+            user = session['username']
+        return render_template('blog.html', sub=sub,user=user, post=post, single=True)
+
 
 @app.route('/admin')
 def admin():

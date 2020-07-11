@@ -39,13 +39,8 @@ class Backend:
 			return (roleprio, item["name"])
 		
 		data = self.db.getIndex()
-		listed = []
-		for item in data:
-			# force weekly to display as int
-			item["Weekly"] = int(item["Weekly"])
-			listed.append(item)
 
-		listed = sorted(listed, key=sorter)
+		listed = sorted(data, key=sorter)
 
 		return listed
 		
@@ -55,6 +50,13 @@ class Backend:
 		"""
 		data = self.db.getBlog()
 		return data
+
+	def getSingleBlog(self, id):
+		"""
+		Get a single blog post with id
+		"""
+		# TODO create a db.py method for getting single blog, this is ugly
+		return self.db.db.blog.find_one({"id": id})
 
 
 	def getLogs(self):

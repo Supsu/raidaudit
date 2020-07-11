@@ -2,20 +2,41 @@
 
 {% block content %}
 
-{% for post in posts %}
+{% if not single %}
+    {% for post in posts %}
 
-    <div class="card">
-        <div class="card-header">{{ post["title"] }}</div>
-        <div class="card-body">
-        <p class="card-text">{{ post["content"] }}</p>
-        <div class="card-footer text-muted">Posted: {{ post["timestamp"] }} </div>
+        <div class="card">
+            <div class="card-header">{{ post["title"] }}</div>
+            <div class="card-body">
+                <p class="card-text">{{ post["content"] }}</p>
+                <div class="card-footer text-muted">
+                    Posted: {{ post["timestamp"] }} -- ID: <a href="blog/{{ post['id'] }}" >{{ post["id"] }}</a>
+                    {% if user %}
+                    <button class="btn btn-success btn-sm" type="button">Edit</button><button class="btn btn-danger btn-sm" type="button">Delete</button>
+                    {% endif %}
+                </div>
+                
+            </div></div>
+        <br>
+        <br>
+
+    {% endfor %}
+
+{% else %}
+
+<div class="card">
+    <div class="card-header">{{ post["title"] }}</div>
+    <div class="card-body">
+    <p class="card-text">{{ post["content"] }}</p>
+    <div class="card-footer text-muted">
+        Posted: {{ post["timestamp"] }} -- ID: <a href="{{ post['id'] }}" >{{ post["id"] }}</a>
         {% if user %}
-        <div class="card-footer"><button class="btn btn-danger" type="button">Delete</button> </div>
+        <button class="btn btn-success btn-sm" type="button">Edit</button><button class="btn btn-danger btn-sm" type="button">Delete</button>
         {% endif %}
-        </div></div>
-    <br>
-    <br>
+    </div>
+    
+    </div></div>
 
-{% endfor %}
+{% endif %}
 
 {% endblock %}

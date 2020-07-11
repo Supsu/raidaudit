@@ -31,6 +31,7 @@ This collection has blog posts for the blog page
   "title": string	-- Title of the post
   "content": string	-- Content of the blog post
   "timestamp": string	-- Timestamp in the format it will be displayed
+  "id": int           -- Epoch timestamp in seconds that serves as an id
 }
 
 
