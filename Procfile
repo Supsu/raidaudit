@@ -1,1 +1,1 @@
-web: gunicorn raidaudit:app
+web: gunicorn wow-raidaudit:app
