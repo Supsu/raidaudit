@@ -12,6 +12,7 @@ class Backend:
 	bnet = ""
 	rio = ""
 	wcl = ""
+	raiderrank = 0
 
 	def __init__(self):
 		self.db = Database()
@@ -95,39 +96,105 @@ class Backend:
 
 	def updateRoster(self):
 		"""
-		Update raider rank characters from armory
+		Update roster data
 		"""
-
-		CLASSID = {
-			1: "Warrior",
-			2: "Paladin",
-			3: "Hunter",
-			4: "Rogue",
-			5: "Priest",
-			6: "Death Knight",
-			7: "Shaman",
-			8: "Mage",
-			9: "Warlock",
-			10: "Monk",
-			11: "Druid",
-			12: "Demon Hunter"
-		}
-
+		# get raiders from bnet
 		roster = self.bnet.getRoster()
+		manuals = self.db.getManualPlayers()
 
-		for player in roster:
-			character = player[0]["character"]
+		# iterate over players and get full data
+		for i in roster:
+			tmp = { "name": "",
+					"Class": "",
+					"Role": "",
+					"ilv": 0.0,
+					"Weekly": 0,
+					"rio": 0.0,
+					"wcln": 0.0,
+					"wclh": 0.0,
+					"wclm": 0.0
+			}
 
-			name = player["character"]["name"]
-			print(name)
-			rank = player["character"]["rank"]
-			print(rank)
-			charclass = CLASSID[player["character"]["playable_class"]["id"]]
-			print(id)
+			name = i["name"]
+			cclass = i["class"]
+
+			tmp["name"] = name
+			tmp["Class"] = cclass
+
+			print("Getting ilv from battle.net profile for " + name)
+			bnetprofile = self.bnet.getCharacterProfile(name)
+			tmp["ilv"] = bnetprofile["average_item_level"]
+
+			print("Getting m+ data from raider.io for " + name)
+			rioprofile = self.rio.getProfile(name)
+
+			tmp["Weekly"] = int(rioprofile["mythic_plus_weekly_highest_level_runs"][0]["mythic_level"])
+			tmp["rio"] = float( rioprofile["mythic_plus_scores_by_season"][0]["scores"]["all"] )
 
 
+			wclperf = self.wcl.getPlayerAvg(name)
 
-		pass
+			tmp["wcln"] = wclperf["avgN"]
+			tmp["wclh"] = wclperf["avgH"]
+			tmp["wclm"] = wclperf["avgM"]
+
+			dbquery = {"name": name}
+			dbnewdata = { "$set": tmp }
+			
+			# push updated automated players to DB
+			# TODO create a method for updating in db.py this is ugly
+			self.db.db.autoplayers.update_one(dbquery, dbnewdata, upsert=True)
+		
+
+		# TODO refactor this to have only one loop / function call
+		# ugly repeating loop
+
+		for i in manuals:
+			tmp = { "name": "",
+					"Class": "",
+					"Role": "",
+					"ilv": 0.0,
+					"Weekly": 0,
+					"rio": 0.0,
+					"wcln": 0.0,
+					"wclh": 0.0,
+					"wclm": 0.0
+			}
+
+			name = i["name"]
+			cclass = i["class"]
+
+			tmp["name"] = name
+			tmp["Class"] = cclass
+
+			print("Getting ilv from battle.net profile for " + name)
+			bnetprofile = self.bnet.getCharacterProfile(name)
+			tmp["ilv"] = bnetprofile["average_item_level"]
+
+			print("Getting m+ data from raider.io for " + name)
+			rioprofile = self.rio.getProfile(name)
+
+			tmp["Weekly"] = int(rioprofile["mythic_plus_weekly_highest_level_runs"][0]["mythic_level"])
+			tmp["rio"] = float( rioprofile["mythic_plus_scores_by_season"][0]["scores"]["all"] )
+
+
+			wclperf = self.wcl.getPlayerAvg(name)
+
+			tmp["wcln"] = wclperf["avgN"]
+			tmp["wclh"] = wclperf["avgH"]
+			tmp["wclm"] = wclperf["avgM"]
+
+			dbquery = {"name": name}
+			dbnewdata =  { "$set": tmp }
+			
+			# push updated automated players to DB
+			# TODO create a method for updating in db.py this is ugly
+			self.db.db.players.update_one(dbquery, dbnewdata, upsert=True)
+
+		# TODO implement some kind of error handling and return False in
+		# case there is an error
+		return True
+
 
 	def updateDB(self):
 		"""
@@ -170,5 +237,7 @@ class Backend:
 if __name__ == "__main__":
 	back = Backend()
 	back.updateRoster()
+	print(back.db.getIndex())
+	
 	
 

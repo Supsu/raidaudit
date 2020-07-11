@@ -42,15 +42,52 @@ class WCL:
 
         url = self._urlbase + "/rankings/character/"
         url = url + player + "/" + self._realm + "/" + self._region
-        url = url + "?metric=dps&api_key=" + self._key
+        url = url + "?api_key=" + self._key
 
-        r = requests.get(url)
+        r = requests.get(url).json()
 
-        return r.json()
+        percentiles = { 3: [],
+                        4: [],
+                        5: [],
+                        "avgN": 0,
+                        "avgH": 0,
+                        "avgM": 0
+                        }
+        count = 0
 
+        if len(r) == 0:
+            pass
+        else:
+            for rank in r:
+                
+                # get parses for N/H/M raids
+                if int( rank["difficulty"] ) == 3:
+                    percentiles[3].append(float(rank["percentile"]))
+
+                elif int( rank["difficulty"] ) == 4:
+                    percentiles[4].append(float(rank["percentile"]))
+
+                elif int( rank["difficulty"] ) == 5:
+                    percentiles[5].append(float(rank["percentile"]))
+
+                else:
+                    # don't do anything with other difficulty values
+                    pass
+
+            # calculate averages
+            if len(percentiles[3]) != 0:
+                percentiles["avgN"] = sum(percentiles[3]) / len(percentiles[3])
+
+            if len(percentiles[4]) != 0:
+                percentiles["avgH"] = sum(percentiles[4]) / len(percentiles[4])
+
+            if len(percentiles[5]) != 0:
+                percentiles["avgM"] = sum(percentiles[5]) / len(percentiles[5])
+
+
+        return percentiles
 
 if __name__ == "__main__":
     print("Testing WCL")
     wcl = WCL()
-    print(wcl.getGuildLogs())
-    print(wcl.getPlayerAvg("Supsu"))
+    print(wcl.getPlayerAvg("Surlo"))

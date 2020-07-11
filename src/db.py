@@ -28,7 +28,15 @@ class Database:
 
 
     def getIndex(self):
-        return self.db.players.find()
+        data = []
+        #self.db.players.find() + self.db.autoplayers.find()
+        for player in self.db.players.find():
+            data.append(player)
+
+        for player in self.db.autoplayers.find():
+            data.append(player)
+
+        return data
 
     
     def getBlog(self):
@@ -48,6 +56,9 @@ class Database:
         else:
             self.db.players.insert_one( {"name": name, "Class": charclass, "Role": role, "ilv": 0.0, "Weekly": 0, "rio": 0.0, "wcln": 0.0, "wclh": 0.0, "wclm": 0.0} )
             pass
+
+    def getManualPlayers(self):
+        return self.db.players.find()
 
 if __name__ == "__main__":
     db = Database()

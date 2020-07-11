@@ -16,12 +16,29 @@ class Bnet:
 	_apiurl = ""
 	_namespace = ""
 	_locale = ""
+	_raiderrank = 0
+
+	_CLASSID = {
+			1: "Warrior",
+			2: "Paladin",
+			3: "Hunter",
+			4: "Rogue",
+			5: "Priest",
+			6: "Death Knight",
+			7: "Shaman",
+			8: "Mage",
+			9: "Warlock",
+			10: "Monk",
+			11: "Druid",
+			12: "Demon Hunter"
+		}
 
 	def __init__(self):
 		self._timestamp = time.time()
 
 		load_dotenv()
 
+		self._raiderrank = int(os.getenv("RAIDERRANK"))
 		self._region = os.getenv("WOWREGION")
 		self._guild = os.getenv("WOWGUILD")
 		self._realm = os.getenv("WOWREALM")
@@ -71,11 +88,24 @@ class Bnet:
 		self._token = self.getAccessToken()
 		reqUrl = self._apiurl + "data/wow/guild/" + self._realm + "/" + self._guild + "/roster?namespace=" + self._namespace + "&locale=" + self._locale + "&access_token=" + self._token
 		
-		req = requests.get(reqUrl)
-		print(str(req.status_code))
-		#reqjson = req.json()
+		roster = requests.get(reqUrl).json()
 
-		return req
+		result = []
+
+		members = roster["members"]
+
+		for character in members:
+			tmp = {"name": "",
+					"class": ""}
+			rank = character["rank"]
+			if rank != self._raiderrank:
+				# not the right rank, skipping
+				continue
+			else:
+				tmp["name"] = character["character"]["name"]
+				tmp["class"] = self._CLASSID[ character["character"]["playable_class"]["id"] ]
+				result.append(tmp)
+		return result
 
 
 	def getCharacterProfile(self, charname, realm=None):
@@ -88,14 +118,13 @@ class Bnet:
 
 		print("Getting character profile for " + charname + " from " + realm)
 
-		atoken = self.getAccessToken()
-		reqUrl = self._apiurl + "data/wow/character/" + realm + "/" + charname + "?namespace=" + self._namespace + "&locale=" + self._locale + "&access_token=" + self._token
-		
+		self._token = self.getAccessToken()
+		reqUrl = self._apiurl + "profile/wow/character/" + realm + "/" + charname.lower() + "?namespace=" + self._namespace + "&locale=" + self._locale + "&access_token=" + self._token
+		print("Req url: " + reqUrl)
 
-		req = requests.get(reqUrl)
-		reqjson = req.json()
+		req = requests.get(reqUrl).json()
 
-		return reqjson
+		return req
 
 
 	
@@ -104,5 +133,4 @@ class Bnet:
 if __name__ == "__main__":
 	print("Running as main, testing..")
 	bnet = Bnet()
-	print(bnet.getRoster())
-	print(bnet.getCharacterProfile("surlo"))
+	print(bnet.getCharacterProfile("Supsu"))
