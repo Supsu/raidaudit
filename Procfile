@@ -1,1 +1,1 @@
-web: gunicorn raidaudit:flaskapp
+web: gunicorn raidaudit:app
