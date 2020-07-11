@@ -21,7 +21,7 @@ class Database:
         self.usr = os.getenv("MONGOUSER")
         self.pwd = os.getenv("MONGOPWD")
 
-        self.client = pymongo.MongoClient(self.dburl, self.dbport, username=self.usr, password=self.pwd)
+        self.client = pymongo.MongoClient(self.dburl, self.dbport, username=self.usr, password=self.pwd, connect=False)
         self.db = self.client.raidaudit
 
         print("Initialized connection to database " + self.db.name)
