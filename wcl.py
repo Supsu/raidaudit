@@ -76,13 +76,13 @@ class WCL:
 
             # calculate averages
             if len(percentiles[3]) != 0:
-                percentiles["avgN"] = sum(percentiles[3]) / len(percentiles[3])
+                percentiles["avgN"] = "{:.2f}".format(sum(percentiles[3]) / len(percentiles[3]))
 
             if len(percentiles[4]) != 0:
-                percentiles["avgH"] = sum(percentiles[4]) / len(percentiles[4])
+                percentiles["avgH"] = "{:.2f}".format(sum(percentiles[4]) / len(percentiles[4]))
 
             if len(percentiles[5]) != 0:
-                percentiles["avgM"] = sum(percentiles[5]) / len(percentiles[5])
+                percentiles["avgM"] = "{:.2f}".format(sum(percentiles[5]) / len(percentiles[5]))
 
 
         return percentiles
@@ -90,4 +90,4 @@ class WCL:
 if __name__ == "__main__":
     print("Testing WCL")
     wcl = WCL()
-    print(wcl.getPlayerAvg("Surlo"))
+    print(wcl.getPlayerAvg("Supsu"))
