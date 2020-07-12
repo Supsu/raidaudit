@@ -67,6 +67,42 @@
     <button id="saveaddition" class="btn btn-success btn-sm" type="submit">Add</button>
     </form>
   </div>
+
+<script type=text/Javascript>
+    function editChange(){
+        var selected = document.getElementById("ename");
+        var player = selected.options[selected.selectedIndex].value;
+
+        // TODO change role and automation to appropriate values
+        
+    }
+</script>
+
+<h3>Edit Character</h3>
+<div class="container">
+    <div class="container">
+        <div class="form-group">
+            <form action="/editplayer" method="post">
+            <label for="ename">Name:</label>
+            <select name="name" id="ename" onchange="editChange()" required>
+                {% for player in players %}
+                    <option value="{{ player["name"] }}">{{ player["name"] }}</option>
+                {% endfor %}
+            </select>
+            <label for="erole">Role:</label>
+            <select name="role" id="erole" required>
+                <option value=""></option>
+                <option value="Tank">Tank</option>
+                <option value="Healer">Healer</option>
+                <option value="DPS">DPS</option>
+            </select>
+            <label for="classes">Automated:</label>
+            <input id="classes" name="classes" type="text" readonly>
+        </div>
+    </div>
+    <button id="saveedit" class="btn btn-success btn-sm" type="submit">Add</button>
+    </form>
+  </div>
  
 
 {% endblock %}

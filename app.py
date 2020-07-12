@@ -53,6 +53,9 @@ def blog(id=None):
 
 @app.route('/admin')
 def admin():
+
+    #TODO pass player list to admin page for editing
+
     user = None
     if 'username' in session:
         user = session['username']
@@ -127,6 +130,25 @@ def addPlayer():
     backend.addPlayer(newplayer)
 
     return redirect(url_for('admin'))
+
+@app.route('/editplayer', methods=["POST"])
+def editPlayer():
+    flash("Editing not yet implemented")
+    name = request.form["name"]
+    role = request.form["role"]
+    classes = request.form["classes"]
+    automated = ""
+
+    if "automated-player" in classes:
+        automated = True
+        flash("You tried to edit automated player " + name + " to have role " + role)
+
+    else:
+        automated = False
+        flash("You tried to edit non-automated player " + name + " to have role " + role)
+
+    return redirect(url_for('admin'))
+    
 
 
 
