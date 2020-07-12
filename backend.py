@@ -199,9 +199,12 @@ class Backend:
 			# TODO create a method for updating in db.py this is ugly
 			self.db.db.players.update_one(dbquery, dbnewdata, upsert=True)
 
+
 		#Update updating time to settings
 		#TODO this needs methods, ugly
-		self.db.db.update_one({}, {"$set": {"timestamp": int(time.time()) }}, upsert=False)
+		print("Setting update timestamp to " + str(int(time.time())) )
+		response = self.db.db.settings.update_one({}, {"$set": {"timestamp": int(time.time()) }}, upsert=False)
+		print("Modified " + str(response.modified_count) + " entries")
 
 		# TODO implement some kind of error handling and return False in
 		# case there is an error
@@ -237,19 +240,18 @@ class Backend:
 			#TODO
 			return boolusr, boolpwd
 
-
 	def post(self, title, content):
 		r = self.db.postBlog(title, content)
 
 		return r
 
-		
+	def getUpdateTimestamp(self):
+		return self.db.getSettings()["timestamp"]
 
 
 if __name__ == "__main__":
 	back = Backend()
-	back.updateRoster()
-	print(back.db.getIndex())
+	print(back.getUpdateTimestamp())
 	
 	
 

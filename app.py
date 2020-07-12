@@ -1,6 +1,7 @@
 from flask import Flask, session, redirect, url_for, request, render_template, flash
 from dotenv import load_dotenv
 from backend import Backend
+import time
 
 app = Flask(__name__)
 
@@ -17,14 +18,18 @@ def index():
     logs = backend.getLogs()
     user = None
 
-    # TODO needs method, ugly
-    updated = ""
-    settings = backend.db.getSettings()
+    # get timestamp for last update
+    updatetime = backend.getUpdateTimestamp()
+    updated = "never"
 
-    if settings["updated"] == "never":
-        updated = "never"
+    # if db has no update time, just return never
+    if updatetime == "never":
+        pass
+    # if it has timestamp, calculate delta to current time
     else:
-        updated = time.strftime('%Y-%m-%d', settings["updated"])
+        timenow = time.time()
+        delta = timenow-updatetime
+        updated = time.strftime("%H hours, %M minutes, %S seconds ago", time.gmtime(delta))
 
     if 'username' in session:
         user = session['username']
@@ -100,9 +105,10 @@ def logout():
 
 @app.route('/update')
 def updateIndex():
+    print("Roster update initiated")
     status = backend.updateRoster()
-    flash("Roster update initiated, please refresh soon!")
-    return redirect(url_for('index'))
+    print("Roster update returned with " + str(status))
+    return "nothing"
 
 
 if __name__ == "__main__":

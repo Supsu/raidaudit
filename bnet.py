@@ -48,8 +48,6 @@ class Bnet:
 		self._locale = os.getenv("WOWLOCALE")
 		self._apiurl = "https://" + self._region + ".api.blizzard.com/"
 
-		print("BNETID " + self._id )
-		print("BNETSECRET " + self._secret )
 
 	def getAccessToken(self):
 		"""

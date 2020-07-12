@@ -1,8 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+<script type=text/javascript>
+  $(function() {
+    $('a#updaterosterbtn').bind('click', function() {
+      $.getJSON('/update',
+          function(data) {
+        //do nothing
+      });
+      alert("Update has been started, please refresh this page in a minute")
+  return false;
+});
+});
+</script>
+
 <div id="messagebox" class="bg-dark"></div>
-  <br><a class="btn btn-success" href="/update" role="button">Update</a> &nbsc; <p class="updatetime">Updated: {{ updated }}</p>
+  <br><a href="#" id="updaterosterbtn"><button class="btn btn-success btn-sm">Update</button></a> &nbsp; <p class="updatetime">Updated: {{ updated }}</p>
   <br>
 <table class="table table-striped table-dark">
   <tr>
