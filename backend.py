@@ -86,9 +86,13 @@ class Backend:
 
 	def addPlayer(self, player):
 		"""
-		Add player to roster
+		Add player to roster manually
 		"""
-		pass
+
+		self.db.addPlayer(player["name"],player["Class"],player["Role"])
+
+		return True
+		
 
 	def removePlayer(self, player):
 		"""

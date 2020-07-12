@@ -64,7 +64,6 @@ def admin():
 
 @app.route('/post', methods=["POST"])
 def postblog():
-    print(request.form)
     r=backend.post(request.form['title'], request.form['post'])
     if r:
         flash("Success!")
@@ -109,6 +108,12 @@ def updateIndex():
     status = backend.updateRoster()
     print("Roster update returned with " + str(status))
     return "nothing"
+
+@app.route('/addplayer', methods=['POST'])
+def addPlayer():
+    playername = request.form["adtname"]
+    playerclass = request.form["adtclass"]
+    playerrole = request.form["adtrole"]
 
 
 if __name__ == "__main__":
