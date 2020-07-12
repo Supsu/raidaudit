@@ -31,9 +31,11 @@ class Database:
         data = []
         #self.db.players.find() + self.db.autoplayers.find()
         for player in self.db.players.find():
+            player["automated"] = "manual-player"
             data.append(player)
 
         for player in self.db.autoplayers.find():
+            player["automated"] = "automated-player"
             data.append(player)
 
         return data
@@ -69,12 +71,4 @@ if __name__ == "__main__":
     for item in db.getIndex():
         print(item)
 
-    print("getBlog")
-
-    for post in db.getBlog():
-        print(post)
-
-    print("getSettings")
-
-    print(db.getSettings())
           

@@ -3,6 +3,7 @@
 {% block content %}
 
 <script type=text/javascript>
+  // function to handle updating roster without refreshing page
   $(function() {
     $('a#updaterosterbtn').bind('click', function() {
       $.getJSON('/update',
@@ -13,12 +14,69 @@
   return false;
 });
 });
+
+clearAddition(){
+  row = document.getElementsByClassName("additionrow")[0];
+  // TODO clear selections
+  alert("TODO")
+
+}
+
+// TODO
+saveAddition(){
+  alert("TODO")
+}
+
+// function to handle unlocking roster for editing
+unlockRoster(){
+  var roleoptions = ["", "Tank", "Healer", "DPS"];
+  var classoptions = ["Death Knight", "Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"];
+
+  var table = document.getElementById("rostertable");
+
+  r = 0;
+  while (row=table.rows[r++]) {
+    // unlock editable fields
+    
+    
+
+  }
+
+  // add a row in the bottom to allow adding players
+  var additionrow = table.insertRow(-1);
+  additionrow.setAttribute("class", "additionrow")
+  var cell1 = additionrow.insertCell(0);
+  cell1.innerHTML = "N/A"
+
+  var cell_name = additionrow.insertCell(1);
+  cell_name.innerHTML="<input type='text' class='form-control' id='adtname' name='adtname'>";
+
+  var cell_class = additionrow.insertCell(2);
+  cell_class.innerHTML="<select name='adtclass' id='adtclass'><option value=''></value></select>";
+  
+  for(var i = 0; i < classoptions.length; i++) {
+    var opt = document.createElement(classoptions[i]);
+    cell_class.add(opt)
+  }
+  
+  var cell_role = additionrow.insertCell(3);
+  cell_role.innerHTML="<select name='adtrole' id='adtrole'><option value=''></value></select>";
+
+
+  var cell_buttons = additionrow.insertCell(4);
+  cell_buttons.innerHTML = "<button class='btn btn-success btn-sm' type='button' onclick='saveAddition()'>Save</button><button class='btn btn-danger btn-sm' type='button' onclick='clearAddition()'>Clear</button>"
+  
+
+}
+
+
 </script>
 
 <div id="messagebox" class="bg-dark"></div>
-  <br><a href="#" id="updaterosterbtn"><button class="btn btn-success btn-sm">Update</button></a> &nbsp; <p class="updatetime">Updated: {{ updated }}</p>
   <br>
-<table class="table table-striped table-dark">
+  <a href="#" id="updaterosterbtn"><button class="btn btn-success btn-sm">Update</button></a> &nbsp; <p class="updatetime">Updated: {{ updated }}</p>
+  <br>
+<table id="rostertable" class="table table-striped table-dark">
   <tr>
       <th>#</th>
       <th>Nick</th>
@@ -34,7 +92,7 @@
   {% for i in data %}
   <tr>
       <td>{{loop.index}}</td>
-      <td> <p class="cname">{{ i["name"] }} </p></td>
+      <td> <p class="cname {{ i["automated"] }}" >{{ i["name"] }} </p></td>
       <td> <p class="cclass"> {{ i["Class"] }} </p></td>
       <td> <p class="crole">{{ i["Role"] }} </p></td>
       <td> <p class="cilv"> {{ i["ilv"] }} </p></td>
@@ -46,6 +104,12 @@
   </tr>
   {% endfor %}
 </table>
+
+{% if user %}
+<div id="editrosterdiv">
+  <button class="btn btn-success btn-sm" onclick="unlockRoster()">Unlock for editing</button>
+</div>
+{% endif %}
 <br>
 <h5>Most recent logs</h5>
 <table class="table table-striped table-dark">
