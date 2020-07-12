@@ -16,9 +16,19 @@ def index():
     roster = backend.getView()
     logs = backend.getLogs()
     user = None
+
+    # TODO needs method, ugly
+    updated = ""
+    settings = backend.db.getSettings()
+
+    if settings["updated"] == "never":
+        updated = "never"
+    else:
+        updated = time.strftime('%Y-%m-%d', settings["updated"])
+
     if 'username' in session:
         user = session['username']
-    return render_template('index.html', sub=sub, user=user, data=roster, logs=logs)
+    return render_template('index.html', sub=sub, user=user, data=roster, logs=logs, updated=updated)
 
 @app.route('/blog')
 @app.route('/blog/<int:id>')
@@ -88,6 +98,11 @@ def logout():
     session.pop('username')
     return redirect(url_for('index'))
 
+@app.route('/update')
+def updateIndex():
+    status = backend.updateRoster()
+    flash("Roster update initiated, please refresh soon!")
+    return redirect(url_for('index'))
 
 
 if __name__ == "__main__":

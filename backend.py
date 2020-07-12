@@ -193,6 +193,10 @@ class Backend:
 			# TODO create a method for updating in db.py this is ugly
 			self.db.db.players.update_one(dbquery, dbnewdata, upsert=True)
 
+		#Update updating time to settings
+		#TODO this needs methods, ugly
+		self.db.db.update_one({}, {"$set": {"timestamp": int(time.time()) }}, upsert=False)
+
 		# TODO implement some kind of error handling and return False in
 		# case there is an error
 		return True
