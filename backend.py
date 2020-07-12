@@ -188,8 +188,12 @@ class Backend:
 
 			print("Getting m+ data from raider.io for " + name)
 			rioprofile = self.rio.getProfile(name)
-
-			tmp["Weekly"] = int(rioprofile["mythic_plus_weekly_highest_level_runs"][0]["mythic_level"])
+			# will return empty list if there are no runs for the week
+			if len(rioprofile["mythic_plus_weekly_highest_level_runs"]) == 0:
+				tmp["Weekly"] = 0
+			else:
+				tmp["Weekly"] = int(rioprofile["mythic_plus_weekly_highest_level_runs"][0]["mythic_level"])
+			
 			tmp["rio"] = float( rioprofile["mythic_plus_scores_by_season"][0]["scores"]["all"] )
 
 
