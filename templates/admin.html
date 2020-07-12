@@ -2,6 +2,20 @@
 
 {% block content %}
 
+<script type=text/javascript>
+    // function to handle updating roster without refreshing page
+    $(function() {
+      $('a#updaterosterbtn').bind('click', function() {
+        $.getJSON('/update',
+            function(data) {
+          //do nothing
+        });
+        alert("Update has been started, please refresh this page in a minute")
+    return false;
+  });
+  });
+</script>
+
 <h3>Post a blog post</h3>
 <form action="post" method="POST">
 <div class="form-group">
@@ -17,37 +31,41 @@
 </form>
 <br>
 <br>
-<h3>Edit roster</h3>
+<h3>Add character</h3>
 
 <div class="container">
-    <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Character..
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="#">Lisää uusi..</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Hahmo1</a>
-            <a class="dropdown-item" href="#">Hahmo2</a>
-            <a class="dropdown-item" href="#">Hahmo3</a>
-        </div>
-    </div>
-
     <div class="container">
         <div class="form-group">
+            <form action="/addplayer" method="post">
             <label for="name">Name:</label>
-            <input type="text" class="form-control" id="name">
-        </div>
-        <div class="form-group">
+            <input type="text" class="form-control" id="name" name="name" required>
             <label for="role">Role:</label>
-            <input type="text" class="form-control" id="role">
+            <select name="role" id="role" name="role" required>
+                <option value="Tank">Tank</option>
+                <option value="Healer">Healer</option>
+                <option value="DPS">DPS</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="class">Class:</label>
-            <input type="text" class="form-control" id="class">
+            <select name="class" id="class" name="class" required>
+                <option value="Death Knight">Death Knight</option>
+                <option value="Demon Hunter">Demon Hunter</option>
+                <option value="Druid">Druid</option>
+                <option value="Hunter">Hunter</option>
+                <option value="Mage">Mage</option>
+                <option value="Monk">Monk</option>
+                <option value="Paladin">Paladin</option>
+                <option value="Priest">Priest</option>
+                <option value="Rogue">Rogue</option>
+                <option value="Shaman">Shaman</option>
+                <option value="Warlock">Warlock</option>
+                <option value="Warrior">Warrior</option>
+            </select>
         </div>
     </div>
-    <button id="savechar" class="btn btn-primary">Save</button>
+    <button id="saveaddition" class="btn btn-success btn-sm" type="submit">Add</button>
+    </form>
   </div>
  
 

@@ -108,6 +108,9 @@ class Backend:
 		roster = self.bnet.getRoster()
 		manuals = self.db.getManualPlayers()
 
+		print(roster)
+		print(manuals)
+
 		# iterate over players and get full data
 		for i in roster:
 			tmp = { "name": "",
@@ -174,7 +177,7 @@ class Backend:
 			}
 
 			name = i["name"]
-			cclass = i["class"]
+			cclass = i["Class"]
 
 			tmp["name"] = name
 			tmp["Class"] = cclass

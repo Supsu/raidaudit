@@ -111,9 +111,23 @@ def updateIndex():
 
 @app.route('/addplayer', methods=['POST'])
 def addPlayer():
-    playername = request.form["adtname"]
-    playerclass = request.form["adtclass"]
-    playerrole = request.form["adtrole"]
+
+    print("Received player addition request")
+    playername = request.form["name"]
+    playerclass = request.form["class"]
+    playerrole = request.form["role"]
+
+
+    print(playername)
+    print(playerclass)
+    print(playerclass)
+
+    newplayer = {"name": playername, "Class": playerclass, "Role": playerrole}
+
+    backend.addPlayer(newplayer)
+
+    return redirect(url_for('admin'))
+
 
 
 if __name__ == "__main__":

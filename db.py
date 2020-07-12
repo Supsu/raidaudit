@@ -62,6 +62,7 @@ class Database:
     def getManualPlayers(self):
         return self.db.players.find()
 
+
 if __name__ == "__main__":
     db = Database()
     print("Testing db methods")

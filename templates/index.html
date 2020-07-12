@@ -15,7 +15,7 @@
 });
 });
 
-clearAddition(){
+function clearAddition(){
   row = document.getElementsByClassName("additionrow")[0];
   // TODO clear selections
   alert("TODO")
@@ -23,12 +23,12 @@ clearAddition(){
 }
 
 // TODO
-saveAddition(){
+function saveAddition(){
   alert("TODO")
 }
 
 // function to handle unlocking roster for editing
-unlockRoster(){
+function unlockRoster(){
   var roleoptions = ["", "Tank", "Healer", "DPS"];
   var classoptions = ["Death Knight", "Demon Hunter", "Druid", "Hunter", "Mage", "Monk", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior"];
 
@@ -44,9 +44,9 @@ unlockRoster(){
 
   // add a row in the bottom to allow adding players, first cell is for numbering so just fill with N/A
   var additionrow = table.insertRow(-1);
-  additionrow.setAttribute("class", "additionrow")
+  additionrow.setAttribute("class", "additionrow");
   var cell1 = additionrow.insertCell(0);
-  cell1.innerHTML = "N/A"
+  cell1.innerHTML = "N/A";
 
   // second cell is for player name, put there a text field
   var cell_name = additionrow.insertCell(1);
@@ -65,7 +65,7 @@ unlockRoster(){
   var cell_role = additionrow.insertCell(3);
   cell_role.innerHTML="<select name='adtrole' id='adtrole'><option value=''></value></select>";
 
-  for(var i = 0); i < roleoptions.lenght; i++){
+  for(var i = 0; i < roleoptions.lenght; i++){
     var opt = document.createElement(roleoptions[i]);
     cell_role.add(opt);
   }
