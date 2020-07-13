@@ -110,6 +110,8 @@ def updateIndex():
     print("Roster update initiated")
     ts = backend.getUpdateTimestamp()
     print(str(int(time.time()) - ts))
+
+    # TODO also make a block in db to not allow multiple updates to run simultaneously
     if int(time.time()) - ts < 60:
         flash("It has been less than a minute since last update! Try again later")
         return "nothing"
