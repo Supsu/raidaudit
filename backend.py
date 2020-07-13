@@ -260,6 +260,9 @@ class Backend:
 		return self.db.getSettings()["timestamp"]
 
 
+	def editPlayerRole(self, playername, playerrole, automated):
+		self.db.updateRole(playername, playerrole, automated)
+
 if __name__ == "__main__":
 	back = Backend()
 	print(back.getUpdateTimestamp())

@@ -54,12 +54,12 @@ def blog(id=None):
 @app.route('/admin')
 def admin():
 
-    #TODO pass player list to admin page for editing
+    players = backend.getView()
 
     user = None
     if 'username' in session:
         user = session['username']
-        return render_template('admin.html', sub=sub, user=user)
+        return render_template('admin.html', sub=sub, user=user, players=players)
     else:
         flash("Please login!")
         return redirect(url_for('index'))
@@ -133,19 +133,17 @@ def addPlayer():
 
 @app.route('/editplayer', methods=["POST"])
 def editPlayer():
-    flash("Editing not yet implemented")
-    name = request.form["name"]
+    attr = request.form["name"].split(",")
     role = request.form["role"]
-    classes = request.form["classes"]
-    automated = ""
+    automated = False
 
-    if "automated-player" in classes:
+    name = attr[0]
+
+    if "automated-player" in attr:
         automated = True
-        flash("You tried to edit automated player " + name + " to have role " + role)
 
-    else:
-        automated = False
-        flash("You tried to edit non-automated player " + name + " to have role " + role)
+    backend.editPlayerRole(name, role, automated)
+        
 
     return redirect(url_for('admin'))
     

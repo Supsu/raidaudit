@@ -57,10 +57,17 @@ class Database:
             self.db.autoplayers.insert_one( {"name": name, "Class": charclass, "Role": role, "ilv": 0.0, "Weekly": 0, "rio": 0.0, "wcln": 0.0, "wclh": 0.0, "wclm": 0.0} )
         else:
             self.db.players.insert_one( {"name": name, "Class": charclass, "Role": role, "ilv": 0.0, "Weekly": 0, "rio": 0.0, "wcln": 0.0, "wclh": 0.0, "wclm": 0.0} )
-            pass
+
 
     def getManualPlayers(self):
         return self.db.players.find()
+
+
+    def updateRole(self, playername, newrole, automated):
+        if automated:
+            self.db.autoplayers.update_one({"name": playername}, {"$set": {"Role": newrole}})
+        else:
+            self.db.players.update_one({"name": playername}, {"$set": {"Role": newrole}})
 
 
 if __name__ == "__main__":

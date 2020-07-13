@@ -70,10 +70,52 @@
 
 <script type=text/Javascript>
     function editChange(){
+        console.log("Selection changed");
         var selected = document.getElementById("ename");
         var player = selected.options[selected.selectedIndex].value;
+        var roleselect = document.getElementById("erole");
 
-        // TODO change role and automation to appropriate values
+        var attributedisplay = document.getElementById("attr");
+
+        attributedisplay.value = player;
+
+        var currentRole = "";
+
+        // looking for roles in classes
+        console.log(player);
+
+        if (player.search("Tank") > 0){
+            currentRole = "Tank";
+        }
+        else if (player.search("Healer") > 0){
+            currentRole = "Healer";
+        }
+        else if (player.search("DPS") > 0){
+            currentRole = "DPS";
+        }
+        else {
+            console.log("No role set")
+        }
+
+
+        // Tank = 1, Healer = 2, DPS = 3
+        // TODO combine these hellish if structures
+        if (currentRole == "Tank") {
+            roleselect.selectedIndex = 1;
+            console.log("Tank");
+        }
+        else if (currentRole == "Healer") {
+            roleselect.selectedIndex = 2;
+            console.log("Healer");
+        }
+        else if (currentRole == "DPS") {
+            roleselect.selectedIndex = 3;
+            console.log("DPS");
+        }
+        else {
+            roleselect.selectedIndex = 0;
+            console.log("No role or problem with detection")
+        }
         
     }
 </script>
@@ -85,8 +127,9 @@
             <form action="/editplayer" method="post">
             <label for="ename">Name:</label>
             <select name="name" id="ename" onchange="editChange()" required>
+                <option value=""></option>
                 {% for player in players %}
-                    <option value="{{ player["name"] }}">{{ player["name"] }}</option>
+                    <option value="{{ player['name'] }},{{ player['Role'] }},{{ player['automated'] }}">{{ player["name"] }}</option>
                 {% endfor %}
             </select>
             <label for="erole">Role:</label>
@@ -96,8 +139,8 @@
                 <option value="Healer">Healer</option>
                 <option value="DPS">DPS</option>
             </select>
-            <label for="classes">Automated:</label>
-            <input id="classes" name="classes" type="text" readonly>
+            <label for="attr">Attributes:</label>
+            <input id="attr" name="attr" type="text" disabled>
         </div>
     </div>
     <button id="saveedit" class="btn btn-success btn-sm" type="submit">Add</button>
