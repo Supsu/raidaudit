@@ -129,6 +129,7 @@ class Backend:
 
 			tmp["name"] = name
 			tmp["Class"] = cclass
+			tmp["Role"] = self.db.findRole(name)
 
 			print("Getting ilv from battle.net profile for " + name)
 			bnetprofile = self.bnet.getCharacterProfile(name)
@@ -181,6 +182,7 @@ class Backend:
 
 			tmp["name"] = name
 			tmp["Class"] = cclass
+			tmp["Role"] = self.db.findRole(name)
 
 			print("Getting ilv from battle.net profile for " + name)
 			bnetprofile = self.bnet.getCharacterProfile(name)
