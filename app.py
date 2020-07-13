@@ -108,6 +108,12 @@ def logout():
 @app.route('/update')
 def updateIndex():
     print("Roster update initiated")
+    ts = backend.getUpdateTimestamp()
+    print(str(int(time.time()) - ts))
+    if int(time.time()) - ts < 60:
+        flash("It has been less than a minute since last update! Try again later")
+        return "nothing"
+
     status = backend.updateRoster()
     print("Roster update returned with " + str(status))
     return "nothing"
