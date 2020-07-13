@@ -1,6 +1,7 @@
 from flask import Flask, session, redirect, url_for, request, render_template, flash
 from dotenv import load_dotenv
 from backend import Backend
+import time
 
 app = Flask(__name__)
 
@@ -16,9 +17,23 @@ def index():
     roster = backend.getView()
     logs = backend.getLogs()
     user = None
+
+    # get timestamp for last update
+    updatetime = backend.getUpdateTimestamp()
+    updated = "never"
+
+    # if db has no update time, just return never
+    if updatetime == "never":
+        pass
+    # if it has timestamp, calculate delta to current time
+    else:
+        timenow = time.time()
+        delta = timenow-updatetime
+        updated = time.strftime("%H hours, %M minutes, %S seconds ago", time.gmtime(delta))
+
     if 'username' in session:
         user = session['username']
-    return render_template('index.html', sub=sub, user=user, data=roster, logs=logs)
+    return render_template('index.html', sub=sub, user=user, data=roster, logs=logs, updated=updated)
 
 @app.route('/blog')
 @app.route('/blog/<int:id>')
@@ -38,10 +53,13 @@ def blog(id=None):
 
 @app.route('/admin')
 def admin():
+
+    players = backend.getView()
+
     user = None
     if 'username' in session:
         user = session['username']
-        return render_template('admin.html', sub=sub, user=user)
+        return render_template('admin.html', sub=sub, user=user, players=players)
     else:
         flash("Please login!")
         return redirect(url_for('index'))
@@ -49,7 +67,6 @@ def admin():
 
 @app.route('/post', methods=["POST"])
 def postblog():
-    print(request.form)
     r=backend.post(request.form['title'], request.form['post'])
     if r:
         flash("Success!")
@@ -87,6 +104,57 @@ def login():
 def logout():
     session.pop('username')
     return redirect(url_for('index'))
+
+@app.route('/update')
+def updateIndex():
+    print("Roster update initiated")
+    ts = backend.getUpdateTimestamp()
+    print(str(int(time.time()) - ts))
+
+    # TODO also make a block in db to not allow multiple updates to run simultaneously
+    if int(time.time()) - ts < 60:
+        flash("It has been less than a minute since last update! Try again later")
+        return "nothing"
+
+    status = backend.updateRoster()
+    print("Roster update returned with " + str(status))
+    return "nothing"
+
+@app.route('/addplayer', methods=['POST'])
+def addPlayer():
+
+    print("Received player addition request")
+    playername = request.form["name"]
+    playerclass = request.form["class"]
+    playerrole = request.form["role"]
+
+
+    print(playername)
+    print(playerclass)
+    print(playerclass)
+
+    newplayer = {"name": playername, "Class": playerclass, "Role": playerrole}
+
+    backend.addPlayer(newplayer)
+
+    return redirect(url_for('admin'))
+
+@app.route('/editplayer', methods=["POST"])
+def editPlayer():
+    attr = request.form["name"].split(",")
+    role = request.form["role"]
+    automated = False
+
+    name = attr[0]
+
+    if "automated-player" in attr:
+        automated = True
+
+    backend.editPlayerRole(name, role, automated)
+        
+
+    return redirect(url_for('admin'))
+    
 
 
 

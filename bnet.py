@@ -48,8 +48,6 @@ class Bnet:
 		self._locale = os.getenv("WOWLOCALE")
 		self._apiurl = "https://" + self._region + ".api.blizzard.com/"
 
-		print("BNETID " + self._id )
-		print("BNETSECRET " + self._secret )
 
 	def getAccessToken(self):
 		"""
@@ -88,7 +86,26 @@ class Bnet:
 		self._token = self.getAccessToken()
 		reqUrl = self._apiurl + "data/wow/guild/" + self._realm + "/" + self._guild + "/roster?namespace=" + self._namespace + "&locale=" + self._locale + "&access_token=" + self._token
 		
-		roster = requests.get(reqUrl).json()
+		
+		try:
+			roster = requests.get(reqUrl)
+			if roster.status_code == 504:
+				raise TimeoutError("HTTP 504")
+		except TimeoutError as err:
+			print("bnet.getRoster TimeoutError " + repr(err))
+			return {}
+
+
+
+		print("bnet.GetRoster " + str(roster.status_code))
+		try:
+			roster = roster.json()
+		except json.decoder.JSONDecodeError as err:
+			print("bnet.getRoster JSONDecodeError " + repr(err))
+			return {}
+		except Exception as err:
+			print("bnet.getRoster Exception " + repr(err))
+			return {}
 
 		result = []
 
@@ -120,9 +137,11 @@ class Bnet:
 
 		self._token = self.getAccessToken()
 		reqUrl = self._apiurl + "profile/wow/character/" + realm + "/" + charname.lower() + "?namespace=" + self._namespace + "&locale=" + self._locale + "&access_token=" + self._token
-		print("Req url: " + reqUrl)
+		print("bnet.getCharacterProfile " + reqUrl)
 
-		req = requests.get(reqUrl).json()
+		req = requests.get(reqUrl)
+		print("bnet.getCharacterProfile " + str(req.status_code))
+		req = req.json()
 
 		return req
 

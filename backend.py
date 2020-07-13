@@ -86,9 +86,13 @@ class Backend:
 
 	def addPlayer(self, player):
 		"""
-		Add player to roster
+		Add player to roster manually
 		"""
-		pass
+
+		self.db.addPlayer(player["name"],player["Class"],player["Role"])
+
+		return True
+		
 
 	def removePlayer(self, player):
 		"""
@@ -103,6 +107,9 @@ class Backend:
 		# get raiders from bnet
 		roster = self.bnet.getRoster()
 		manuals = self.db.getManualPlayers()
+
+		print(roster)
+		print(manuals)
 
 		# iterate over players and get full data
 		for i in roster:
@@ -130,7 +137,13 @@ class Backend:
 			print("Getting m+ data from raider.io for " + name)
 			rioprofile = self.rio.getProfile(name)
 
-			tmp["Weekly"] = int(rioprofile["mythic_plus_weekly_highest_level_runs"][0]["mythic_level"])
+			# will return empty list if there are no runs for the week
+			if len(rioprofile["mythic_plus_weekly_highest_level_runs"]) == 0:
+				tmp["Weekly"] = 0
+			else:
+				tmp["Weekly"] = int(rioprofile["mythic_plus_weekly_highest_level_runs"][0]["mythic_level"])
+
+			# in case of no data, should still return 0 as a score
 			tmp["rio"] = float( rioprofile["mythic_plus_scores_by_season"][0]["scores"]["all"] )
 
 
@@ -164,7 +177,7 @@ class Backend:
 			}
 
 			name = i["name"]
-			cclass = i["class"]
+			cclass = i["Class"]
 
 			tmp["name"] = name
 			tmp["Class"] = cclass
@@ -175,8 +188,12 @@ class Backend:
 
 			print("Getting m+ data from raider.io for " + name)
 			rioprofile = self.rio.getProfile(name)
-
-			tmp["Weekly"] = int(rioprofile["mythic_plus_weekly_highest_level_runs"][0]["mythic_level"])
+			# will return empty list if there are no runs for the week
+			if len(rioprofile["mythic_plus_weekly_highest_level_runs"]) == 0:
+				tmp["Weekly"] = 0
+			else:
+				tmp["Weekly"] = int(rioprofile["mythic_plus_weekly_highest_level_runs"][0]["mythic_level"])
+			
 			tmp["rio"] = float( rioprofile["mythic_plus_scores_by_season"][0]["scores"]["all"] )
 
 
@@ -192,6 +209,13 @@ class Backend:
 			# push updated automated players to DB
 			# TODO create a method for updating in db.py this is ugly
 			self.db.db.players.update_one(dbquery, dbnewdata, upsert=True)
+
+
+		#Update updating time to settings
+		#TODO this needs methods, ugly
+		print("Setting update timestamp to " + str(int(time.time())) )
+		response = self.db.db.settings.update_one({}, {"$set": {"timestamp": int(time.time()) }}, upsert=False)
+		print("Modified " + str(response.modified_count) + " entries")
 
 		# TODO implement some kind of error handling and return False in
 		# case there is an error
@@ -227,19 +251,21 @@ class Backend:
 			#TODO
 			return boolusr, boolpwd
 
-
 	def post(self, title, content):
 		r = self.db.postBlog(title, content)
 
 		return r
 
-		
+	def getUpdateTimestamp(self):
+		return self.db.getSettings()["timestamp"]
 
+
+	def editPlayerRole(self, playername, playerrole, automated):
+		self.db.updateRole(playername, playerrole, automated)
 
 if __name__ == "__main__":
 	back = Backend()
-	back.updateRoster()
-	print(back.db.getIndex())
+	print(back.getUpdateTimestamp())
 	
 	
 
