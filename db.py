@@ -69,6 +69,20 @@ class Database:
         else:
             self.db.players.update_one({"name": playername}, {"$set": {"Role": newrole}})
 
+    def findRole(self, player):
+        # try automated players first since they are probably majority
+
+        found = self.db.autoplayers.find_one({"name": player})
+        if found is not None:
+            return found["Role"]
+        else:
+            found = self.db.players.find_one({"name": player})
+            if found is not None:
+                return found["Role"]
+
+            else:
+                return ""
+
 
 if __name__ == "__main__":
     db = Database()
