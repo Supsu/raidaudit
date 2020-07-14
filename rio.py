@@ -14,7 +14,7 @@ class RIO:
         self._region = os.getenv("WOWREGION")
 
 
-    def getProfile(self, charname):
+    def getProfile(self, charname: str):
         url = "https://raider.io/api/v1/characters/profile?"
         url = url + "region=" + self._region
         url = url + "&realm=" + self._realm

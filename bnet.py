@@ -1,24 +1,27 @@
 import time
+from typing import Dict
+
 import requests
 from dotenv import load_dotenv
 import os
 import json
 
-class Bnet:
-	_id = ""
-	_secret = ""
-	_token = ""
-	_expires = 0
-	_timestamp = 0
-	_region = ""
-	_guild = ""
-	_realm = ""
-	_apiurl = ""
-	_namespace = ""
-	_locale = ""
-	_raiderrank = 0
 
-	_CLASSID = {
+class Bnet:
+	_id: str = ""
+	_secret: str = ""
+	_token: str = ""
+	_expires: int = 0
+	_timestamp: float = 0
+	_region: str = ""
+	_guild: str = ""
+	_realm: str = ""
+	_apiurl: str = ""
+	_namespace: str = ""
+	_locale: str = ""
+	_raiderrank: int = 0
+
+	_CLASSID: Dict[int, str] = {
 			1: "Warrior",
 			2: "Paladin",
 			3: "Hunter",
@@ -49,7 +52,7 @@ class Bnet:
 		self._apiurl = "https://" + self._region + ".api.blizzard.com/"
 
 
-	def getAccessToken(self):
+	def getAccessToken(self) -> str:
 		"""
 		Get access token with given id and secret
 		"""
@@ -125,7 +128,7 @@ class Bnet:
 		return result
 
 
-	def getCharacterProfile(self, charname, realm=None):
+	def getCharacterProfile(self, charname: str, realm: str = None):
 		"""
 		get profile for a certain character
 		"""
