@@ -3,6 +3,15 @@ from dotenv import load_dotenv
 from backend import Backend
 import time
 
+import subprocess
+
+version = ""
+try:
+    version = str(subprocess.check_output(["git", "describe", "--all", "--always", "HEAD"]).strip())
+except:
+    version = "N/A"
+print(version)
+
 app = Flask(__name__)
 
 app.secret_key = 'uaiYSaYISUS41567YDabhY&WQT23YTEEiubz'
@@ -16,6 +25,7 @@ backend = Backend()
 @app.route('/')
 def index():
     sidebar = backend.getSideBar()
+    sidebar.append({"version": version})
     roster = backend.getView()
     logs = backend.getLogs()
     user = None

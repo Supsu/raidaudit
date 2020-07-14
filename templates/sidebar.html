@@ -24,6 +24,7 @@
 {% endfor %}
 <div class="card">
     <div class="card-body">
+        <p>Running version: {{ sidebar[1]["version"] }}</p>
         <a href="https://github.com/Supsu/raidaudit" target="_blank">
             <img src="{{ url_for('static', filename='img/GitHub-Mark-64px.png') }}">
             <p>Fork me!</p>
