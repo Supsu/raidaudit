@@ -68,7 +68,7 @@ def index():
 @app.route('/blog/<int:id>')
 def blog(id=None):
     """
-    Responds to routes '/blog' and '/blog/<int:id>'.
+    Responds to routes '/blog' and '/blog/id'.
     
     If no ID is given returns blog posts
     gotten from backeng.getBlog() and with ID backend.getSingleBlog(id). Returns 
