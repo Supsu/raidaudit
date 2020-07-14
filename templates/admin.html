@@ -20,7 +20,9 @@
     Post a blog post
   </a>
 <div class="collapse" id="postblogscr">
-<h3>Post a blog post</h3>
+    <div class="card">
+        <div class="card-body">
+<h5 class="card-title">Post a blog post</h5>
 <form action="post" method="POST">
 <div class="form-group">
     <label for="title">Title:</label>
@@ -33,15 +35,20 @@
 </div>
     <button id="postnewblog" class="btn btn-primary" type="submit">Post</button>
 </form>
-<br><br><br><br>
+</div></div>
 
 </div>
 
 <a class="btn btn-success" data-toggle="collapse" href="#addcharacterscr" role="button" aria-expanded="false" aria-controls="collapseExample">
     Add character
   </a>
+
+
+
 <div class="collapse" id="addcharacterscr">
-    <h3>Add character</h3>
+    <div class="card">
+        <div class="card-body">
+    <h5 class="card-title">Add character</h5>
 
 <div class="container">
     <div class="container">
@@ -77,7 +84,7 @@
     <button id="saveaddition" class="btn btn-success btn-sm" type="submit">Add</button>
     </form>
   </div>
-  <br><br><br><br>
+</div></div>
   </div>
 
 <script type=text/Javascript>
@@ -136,7 +143,9 @@
     Edit character
 </a>
 <div class="collapse" id="editcharacterscr">
-<h3>Edit Character</h3>
+    <div class="card">
+        <div class="card-body">
+<h5 class="card-title">Edit Character</h5>
 <div class="container">
     <div class="container">
         <div class="form-group">
@@ -162,7 +171,7 @@
     <button id="saveedit" class="btn btn-success btn-sm" type="submit">Add</button>
     </form>
   </div>
-  <br><br><br><br>
+</div></div>
  </div>
 
 {% endblock %}
