@@ -11,15 +11,15 @@ class Bnet:
 	_id: str = ""
 	_secret: str = ""
 	_token: str = ""
-	_expires: str = 0
-	_timestamp: str = 0
+	_expires: int = 0
+	_timestamp: float = 0
 	_region: str = ""
 	_guild: str = ""
 	_realm: str = ""
 	_apiurl: str = ""
 	_namespace: str = ""
 	_locale: str = ""
-	_raiderrank: str = 0
+	_raiderrank: int = 0
 
 	_CLASSID: Dict[int, str] = {
 			1: "Warrior",
