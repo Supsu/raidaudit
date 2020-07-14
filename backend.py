@@ -1,3 +1,5 @@
+from typing import Dict, List, Tuple
+
 from db import Database
 from bnet import Bnet
 from rio import RIO
@@ -20,12 +22,12 @@ class Backend:
 		self.rio = RIO()
 		self.wcl = WCL()
 
-	def getView(self):
+	def getView(self) -> List[Dict[str, str]]:
 		"""
 		Get data for roster table
 		"""
 
-		def sorter(item):
+		def sorter(item) -> Tuple[int, str]:
 			roleprio = 0
 			if item["Role"] == "Tank":
 				roleprio = 1
@@ -51,7 +53,7 @@ class Backend:
 		data = self.db.getBlog()
 		return data
 
-	def getSingleBlog(self, id):
+	def getSingleBlog(self, id: str):
 		"""
 		Get a single blog post with id
 		"""
@@ -84,7 +86,7 @@ class Backend:
 		"""
 		pass
 
-	def addPlayer(self, player):
+	def addPlayer(self, player: Dict[str, str]) -> bool:
 		"""
 		Add player to roster manually
 		"""
@@ -230,7 +232,7 @@ class Backend:
 		"""
 		pass
 
-	def login(self, usr, pwd):
+	def login(self, usr: str, pwd: str):
 		"""
 		Check login information
 		"""
@@ -253,7 +255,7 @@ class Backend:
 			#TODO
 			return boolusr, boolpwd
 
-	def post(self, title, content):
+	def post(self, title: str, content: str):
 		r = self.db.postBlog(title, content)
 
 		return r
@@ -262,7 +264,7 @@ class Backend:
 		return self.db.getSettings()["timestamp"]
 
 
-	def editPlayerRole(self, playername, playerrole, automated):
+	def editPlayerRole(self, playername: str, playerrole: str, automated: bool):
 		self.db.updateRole(playername, playerrole, automated)
 
 

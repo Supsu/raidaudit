@@ -20,7 +20,7 @@ class WCL:
         self._realm = os.getenv("WOWREALM")
         self._guild = os.getenv("WOWGUILD")
 
-    def getGuildLogs(self):
+    def getGuildLogs(self) -> str:
         url = self._urlbase + "/reports/guild/"
         url = url + self._guild + "/"
         url = url + self._realm + "/"
@@ -36,7 +36,7 @@ class WCL:
 
         return r.text
 
-    def getPlayerAvg(self,player):
+    def getPlayerAvg(self, player: str):
         #https://www.warcraftlogs.com:443/v1/rankings/character/supsu/stormscale/eu?metric=dps
 
 

@@ -1,3 +1,5 @@
+from typing import List
+
 import pymongo
 from dotenv import load_dotenv
 import os
@@ -47,7 +49,7 @@ class Database:
     def getSettings(self):
         return self.db.settings.find_one()
 
-    def postBlog(self, title, content):
+    def postBlog(self, title: str, content: str) -> bool:
         self.db.blog.insert_one({ "title": title, "content": content, "timestamp": time.strftime('%Y-%m-%d', time.localtime()), "id": int(time.time())})
         #TODO error checking
         return True
