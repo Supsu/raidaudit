@@ -1,0 +1,1068 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.3" />
+<title>raidaudit.backend API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>raidaudit.backend</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from typing import Dict, List, Tuple
+
+from db import Database
+from bnet import Bnet
+from rio import RIO
+from wcl import WCL
+import json
+import time
+
+
+class Backend:
+
+        db = &#34;&#34;
+        bnet = &#34;&#34;
+        rio = &#34;&#34;
+        wcl = &#34;&#34;
+        raiderrank = 0
+
+        def __init__(self):
+                self.db = Database()
+                self.bnet = Bnet()
+                self.rio = RIO()
+                self.wcl = WCL()
+
+        def getView(self) -&gt; List[Dict[str, str]]:
+                &#34;&#34;&#34;
+                Get data for roster table
+                &#34;&#34;&#34;
+
+                def sorter(item) -&gt; Tuple[int, str]:
+                        roleprio = 0
+                        if item[&#34;Role&#34;] == &#34;Tank&#34;:
+                                roleprio = 1
+                        elif item[&#34;Role&#34;] == &#34;Healer&#34;:
+                                roleprio = 2
+                        elif item[&#34;Role&#34;] == &#34;DPS&#34;:
+                                roleprio = 3
+                        else:
+                                roleprio = 4
+
+                        return (roleprio, item[&#34;name&#34;])
+                
+                data = self.db.getIndex()
+
+                listed = sorted(data, key=sorter)
+
+                return listed
+                
+        def getBlog(self):
+                &#34;&#34;&#34;
+                Get blog posts
+                &#34;&#34;&#34;
+                data = self.db.getBlog()
+                return data
+
+        def getSingleBlog(self, id: str):
+                &#34;&#34;&#34;
+                Get a single blog post with id
+                &#34;&#34;&#34;
+                # TODO create a db.py method for getting single blog, this is ugly
+                return self.db.db.blog.find_one({&#34;id&#34;: id})
+
+
+        def getLogs(self):
+                &#34;&#34;&#34;
+                Get most recent logs for guild from WCL
+                &#34;&#34;&#34;
+
+                data = json.loads(self.wcl.getGuildLogs())
+
+                if &#34;error&#34; in data:
+                        
+                        data = [{&#34;title&#34;: &#34;Error!&#34;, &#34;start&#34;: data[&#34;error&#34;], &#34;id&#34;: &#34; &#34;}]
+
+                elif len(data) &gt; 10:
+                        data = data[0:10]
+
+                for row in data:
+                        row[&#34;start&#34;] = time.strftime(&#39;%Y-%m-%d&#39;, time.localtime(int(row[&#34;start&#34;]/1000)))
+
+                return data
+
+        def updateView(self):
+                &#34;&#34;&#34;
+                Update view tables from db
+                &#34;&#34;&#34;
+                pass
+
+        def addPlayer(self, player: Dict[str, str]) -&gt; bool:
+                &#34;&#34;&#34;
+                Add player to roster manually
+                &#34;&#34;&#34;
+
+                self.db.addPlayer(player[&#34;name&#34;],player[&#34;Class&#34;],player[&#34;Role&#34;])
+
+                return True
+                
+
+        def removePlayer(self, player):
+                &#34;&#34;&#34;
+                Remove player from roster
+                &#34;&#34;&#34;
+                pass
+
+        def updateRoster(self):
+                &#34;&#34;&#34;
+                Update roster data
+                &#34;&#34;&#34;
+                # get raiders from bnet
+                roster = self.bnet.getRoster()
+                manuals = self.db.getManualPlayers()
+
+                print(roster)
+                print(manuals)
+
+                # iterate over players and get full data
+                for i in roster:
+                        tmp = { &#34;name&#34;: &#34;&#34;,
+                                        &#34;Class&#34;: &#34;&#34;,
+                                        &#34;Role&#34;: &#34;&#34;,
+                                        &#34;ilv&#34;: 0.0,
+                                        &#34;Weekly&#34;: 0,
+                                        &#34;rio&#34;: 0.0,
+                                        &#34;wcln&#34;: 0.0,
+                                        &#34;wclh&#34;: 0.0,
+                                        &#34;wclm&#34;: 0.0
+                        }
+
+                        name = i[&#34;name&#34;]
+                        cclass = i[&#34;class&#34;]
+
+                        tmp[&#34;name&#34;] = name
+                        tmp[&#34;Class&#34;] = cclass
+                        tmp[&#34;Role&#34;] = self.db.findRole(name)
+
+                        print(&#34;Getting ilv from battle.net profile for &#34; + name)
+                        bnetprofile = self.bnet.getCharacterProfile(name)
+                        tmp[&#34;ilv&#34;] = bnetprofile[&#34;average_item_level&#34;]
+
+                        print(&#34;Getting m+ data from raider.io for &#34; + name)
+                        rioprofile = self.rio.getProfile(name)
+
+                        # will return empty list if there are no runs for the week
+                        if len(rioprofile[&#34;mythic_plus_weekly_highest_level_runs&#34;]) == 0:
+                                tmp[&#34;Weekly&#34;] = 0
+                        else:
+                                tmp[&#34;Weekly&#34;] = int(rioprofile[&#34;mythic_plus_weekly_highest_level_runs&#34;][0][&#34;mythic_level&#34;])
+
+                        # in case of no data, should still return 0 as a score
+                        tmp[&#34;rio&#34;] = float( rioprofile[&#34;mythic_plus_scores_by_season&#34;][0][&#34;scores&#34;][&#34;all&#34;] )
+
+
+                        wclperf = self.wcl.getPlayerAvg(name)
+
+                        tmp[&#34;wcln&#34;] = wclperf[&#34;avgN&#34;]
+                        tmp[&#34;wclh&#34;] = wclperf[&#34;avgH&#34;]
+                        tmp[&#34;wclm&#34;] = wclperf[&#34;avgM&#34;]
+
+                        dbquery = {&#34;name&#34;: name}
+                        dbnewdata = { &#34;$set&#34;: tmp }
+                        
+                        # push updated automated players to DB
+                        # TODO create a method for updating in db.py this is ugly
+                        self.db.db.autoplayers.update_one(dbquery, dbnewdata, upsert=True)
+                
+
+                # TODO refactor this to have only one loop / function call
+                # ugly repeating loop
+
+                for i in manuals:
+                        tmp = { &#34;name&#34;: &#34;&#34;,
+                                        &#34;Class&#34;: &#34;&#34;,
+                                        &#34;Role&#34;: &#34;&#34;,
+                                        &#34;ilv&#34;: 0.0,
+                                        &#34;Weekly&#34;: 0,
+                                        &#34;rio&#34;: 0.0,
+                                        &#34;wcln&#34;: 0.0,
+                                        &#34;wclh&#34;: 0.0,
+                                        &#34;wclm&#34;: 0.0
+                        }
+
+                        name = i[&#34;name&#34;]
+                        cclass = i[&#34;Class&#34;]
+
+                        tmp[&#34;name&#34;] = name
+                        tmp[&#34;Class&#34;] = cclass
+                        tmp[&#34;Role&#34;] = self.db.findRole(name)
+
+                        print(&#34;Getting ilv from battle.net profile for &#34; + name)
+                        bnetprofile = self.bnet.getCharacterProfile(name)
+                        tmp[&#34;ilv&#34;] = bnetprofile[&#34;average_item_level&#34;]
+
+                        print(&#34;Getting m+ data from raider.io for &#34; + name)
+                        rioprofile = self.rio.getProfile(name)
+                        # will return empty list if there are no runs for the week
+                        if len(rioprofile[&#34;mythic_plus_weekly_highest_level_runs&#34;]) == 0:
+                                tmp[&#34;Weekly&#34;] = 0
+                        else:
+                                tmp[&#34;Weekly&#34;] = int(rioprofile[&#34;mythic_plus_weekly_highest_level_runs&#34;][0][&#34;mythic_level&#34;])
+                        
+                        tmp[&#34;rio&#34;] = float( rioprofile[&#34;mythic_plus_scores_by_season&#34;][0][&#34;scores&#34;][&#34;all&#34;] )
+
+
+                        wclperf = self.wcl.getPlayerAvg(name)
+
+                        tmp[&#34;wcln&#34;] = wclperf[&#34;avgN&#34;]
+                        tmp[&#34;wclh&#34;] = wclperf[&#34;avgH&#34;]
+                        tmp[&#34;wclm&#34;] = wclperf[&#34;avgM&#34;]
+
+                        dbquery = {&#34;name&#34;: name}
+                        dbnewdata =  { &#34;$set&#34;: tmp }
+                        
+                        # push updated automated players to DB
+                        # TODO create a method for updating in db.py this is ugly
+                        self.db.db.players.update_one(dbquery, dbnewdata, upsert=True)
+
+
+                #Update updating time to settings
+                #TODO this needs methods, ugly
+                print(&#34;Setting update timestamp to &#34; + str(int(time.time())) )
+                response = self.db.db.settings.update_one({}, {&#34;$set&#34;: {&#34;timestamp&#34;: int(time.time()) }}, upsert=False)
+                print(&#34;Modified &#34; + str(response.modified_count) + &#34; entries&#34;)
+
+                # TODO implement some kind of error handling and return False in
+                # case there is an error
+                return True
+
+
+        def updateDB(self):
+                &#34;&#34;&#34;
+                Update players in database from r.io and wcl
+                &#34;&#34;&#34;
+                pass
+
+        def login(self, usr: str, pwd: str):
+                &#34;&#34;&#34;
+                Check login information
+                &#34;&#34;&#34;
+
+                settings = self.db.getSettings()
+
+                boolusr=False
+                boolpwd=False
+
+                # check admin credentials
+                if settings[&#34;adminname&#34;] == usr:
+                        boolusr=True
+                if settings[&#34;adminpwd&#34;] == pwd:
+                        boolpwd=True
+
+                if boolusr and boolpwd:
+                        return boolusr, boolpwd
+                else:
+                        #check additional login table for officers etc
+                        #TODO
+                        return boolusr, boolpwd
+
+        def post(self, title: str, content: str):
+                r = self.db.postBlog(title, content)
+
+                return r
+
+        def getUpdateTimestamp(self):
+                return self.db.getSettings()[&#34;timestamp&#34;]
+
+
+        def editPlayerRole(self, playername: str, playerrole: str, automated: bool):
+                self.db.updateRole(playername, playerrole, automated)
+
+
+        def getSideBar(self):
+                &#34;&#34;&#34;
+                Get raid progress of guild from raider.io
+                &#34;&#34;&#34;
+
+                # TODO
+                return [[{&#34;name&#34;: &#34;testiraidi&#34;, &#34;normalperc&#34;: 100, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 45, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 15, &#34;mythicprog&#34;: &#34;5/100&#34; },
+                                {&#34;name&#34;: &#34;testiraidi2&#34;, &#34;normalperc&#34;: 80, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 75, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 35, &#34;mythicprog&#34;: &#34;5/100&#34; }]]
+
+if __name__ == &#34;__main__&#34;:
+        back = Backend()
+        print(back.getUpdateTimestamp())
+        
+        </code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="raidaudit.backend.Backend"><code class="flex name class">
+<span>class <span class="ident">Backend</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Backend:
+
+        db = &#34;&#34;
+        bnet = &#34;&#34;
+        rio = &#34;&#34;
+        wcl = &#34;&#34;
+        raiderrank = 0
+
+        def __init__(self):
+                self.db = Database()
+                self.bnet = Bnet()
+                self.rio = RIO()
+                self.wcl = WCL()
+
+        def getView(self) -&gt; List[Dict[str, str]]:
+                &#34;&#34;&#34;
+                Get data for roster table
+                &#34;&#34;&#34;
+
+                def sorter(item) -&gt; Tuple[int, str]:
+                        roleprio = 0
+                        if item[&#34;Role&#34;] == &#34;Tank&#34;:
+                                roleprio = 1
+                        elif item[&#34;Role&#34;] == &#34;Healer&#34;:
+                                roleprio = 2
+                        elif item[&#34;Role&#34;] == &#34;DPS&#34;:
+                                roleprio = 3
+                        else:
+                                roleprio = 4
+
+                        return (roleprio, item[&#34;name&#34;])
+                
+                data = self.db.getIndex()
+
+                listed = sorted(data, key=sorter)
+
+                return listed
+                
+        def getBlog(self):
+                &#34;&#34;&#34;
+                Get blog posts
+                &#34;&#34;&#34;
+                data = self.db.getBlog()
+                return data
+
+        def getSingleBlog(self, id: str):
+                &#34;&#34;&#34;
+                Get a single blog post with id
+                &#34;&#34;&#34;
+                # TODO create a db.py method for getting single blog, this is ugly
+                return self.db.db.blog.find_one({&#34;id&#34;: id})
+
+
+        def getLogs(self):
+                &#34;&#34;&#34;
+                Get most recent logs for guild from WCL
+                &#34;&#34;&#34;
+
+                data = json.loads(self.wcl.getGuildLogs())
+
+                if &#34;error&#34; in data:
+                        
+                        data = [{&#34;title&#34;: &#34;Error!&#34;, &#34;start&#34;: data[&#34;error&#34;], &#34;id&#34;: &#34; &#34;}]
+
+                elif len(data) &gt; 10:
+                        data = data[0:10]
+
+                for row in data:
+                        row[&#34;start&#34;] = time.strftime(&#39;%Y-%m-%d&#39;, time.localtime(int(row[&#34;start&#34;]/1000)))
+
+                return data
+
+        def updateView(self):
+                &#34;&#34;&#34;
+                Update view tables from db
+                &#34;&#34;&#34;
+                pass
+
+        def addPlayer(self, player: Dict[str, str]) -&gt; bool:
+                &#34;&#34;&#34;
+                Add player to roster manually
+                &#34;&#34;&#34;
+
+                self.db.addPlayer(player[&#34;name&#34;],player[&#34;Class&#34;],player[&#34;Role&#34;])
+
+                return True
+                
+
+        def removePlayer(self, player):
+                &#34;&#34;&#34;
+                Remove player from roster
+                &#34;&#34;&#34;
+                pass
+
+        def updateRoster(self):
+                &#34;&#34;&#34;
+                Update roster data
+                &#34;&#34;&#34;
+                # get raiders from bnet
+                roster = self.bnet.getRoster()
+                manuals = self.db.getManualPlayers()
+
+                print(roster)
+                print(manuals)
+
+                # iterate over players and get full data
+                for i in roster:
+                        tmp = { &#34;name&#34;: &#34;&#34;,
+                                        &#34;Class&#34;: &#34;&#34;,
+                                        &#34;Role&#34;: &#34;&#34;,
+                                        &#34;ilv&#34;: 0.0,
+                                        &#34;Weekly&#34;: 0,
+                                        &#34;rio&#34;: 0.0,
+                                        &#34;wcln&#34;: 0.0,
+                                        &#34;wclh&#34;: 0.0,
+                                        &#34;wclm&#34;: 0.0
+                        }
+
+                        name = i[&#34;name&#34;]
+                        cclass = i[&#34;class&#34;]
+
+                        tmp[&#34;name&#34;] = name
+                        tmp[&#34;Class&#34;] = cclass
+                        tmp[&#34;Role&#34;] = self.db.findRole(name)
+
+                        print(&#34;Getting ilv from battle.net profile for &#34; + name)
+                        bnetprofile = self.bnet.getCharacterProfile(name)
+                        tmp[&#34;ilv&#34;] = bnetprofile[&#34;average_item_level&#34;]
+
+                        print(&#34;Getting m+ data from raider.io for &#34; + name)
+                        rioprofile = self.rio.getProfile(name)
+
+                        # will return empty list if there are no runs for the week
+                        if len(rioprofile[&#34;mythic_plus_weekly_highest_level_runs&#34;]) == 0:
+                                tmp[&#34;Weekly&#34;] = 0
+                        else:
+                                tmp[&#34;Weekly&#34;] = int(rioprofile[&#34;mythic_plus_weekly_highest_level_runs&#34;][0][&#34;mythic_level&#34;])
+
+                        # in case of no data, should still return 0 as a score
+                        tmp[&#34;rio&#34;] = float( rioprofile[&#34;mythic_plus_scores_by_season&#34;][0][&#34;scores&#34;][&#34;all&#34;] )
+
+
+                        wclperf = self.wcl.getPlayerAvg(name)
+
+                        tmp[&#34;wcln&#34;] = wclperf[&#34;avgN&#34;]
+                        tmp[&#34;wclh&#34;] = wclperf[&#34;avgH&#34;]
+                        tmp[&#34;wclm&#34;] = wclperf[&#34;avgM&#34;]
+
+                        dbquery = {&#34;name&#34;: name}
+                        dbnewdata = { &#34;$set&#34;: tmp }
+                        
+                        # push updated automated players to DB
+                        # TODO create a method for updating in db.py this is ugly
+                        self.db.db.autoplayers.update_one(dbquery, dbnewdata, upsert=True)
+                
+
+                # TODO refactor this to have only one loop / function call
+                # ugly repeating loop
+
+                for i in manuals:
+                        tmp = { &#34;name&#34;: &#34;&#34;,
+                                        &#34;Class&#34;: &#34;&#34;,
+                                        &#34;Role&#34;: &#34;&#34;,
+                                        &#34;ilv&#34;: 0.0,
+                                        &#34;Weekly&#34;: 0,
+                                        &#34;rio&#34;: 0.0,
+                                        &#34;wcln&#34;: 0.0,
+                                        &#34;wclh&#34;: 0.0,
+                                        &#34;wclm&#34;: 0.0
+                        }
+
+                        name = i[&#34;name&#34;]
+                        cclass = i[&#34;Class&#34;]
+
+                        tmp[&#34;name&#34;] = name
+                        tmp[&#34;Class&#34;] = cclass
+                        tmp[&#34;Role&#34;] = self.db.findRole(name)
+
+                        print(&#34;Getting ilv from battle.net profile for &#34; + name)
+                        bnetprofile = self.bnet.getCharacterProfile(name)
+                        tmp[&#34;ilv&#34;] = bnetprofile[&#34;average_item_level&#34;]
+
+                        print(&#34;Getting m+ data from raider.io for &#34; + name)
+                        rioprofile = self.rio.getProfile(name)
+                        # will return empty list if there are no runs for the week
+                        if len(rioprofile[&#34;mythic_plus_weekly_highest_level_runs&#34;]) == 0:
+                                tmp[&#34;Weekly&#34;] = 0
+                        else:
+                                tmp[&#34;Weekly&#34;] = int(rioprofile[&#34;mythic_plus_weekly_highest_level_runs&#34;][0][&#34;mythic_level&#34;])
+                        
+                        tmp[&#34;rio&#34;] = float( rioprofile[&#34;mythic_plus_scores_by_season&#34;][0][&#34;scores&#34;][&#34;all&#34;] )
+
+
+                        wclperf = self.wcl.getPlayerAvg(name)
+
+                        tmp[&#34;wcln&#34;] = wclperf[&#34;avgN&#34;]
+                        tmp[&#34;wclh&#34;] = wclperf[&#34;avgH&#34;]
+                        tmp[&#34;wclm&#34;] = wclperf[&#34;avgM&#34;]
+
+                        dbquery = {&#34;name&#34;: name}
+                        dbnewdata =  { &#34;$set&#34;: tmp }
+                        
+                        # push updated automated players to DB
+                        # TODO create a method for updating in db.py this is ugly
+                        self.db.db.players.update_one(dbquery, dbnewdata, upsert=True)
+
+
+                #Update updating time to settings
+                #TODO this needs methods, ugly
+                print(&#34;Setting update timestamp to &#34; + str(int(time.time())) )
+                response = self.db.db.settings.update_one({}, {&#34;$set&#34;: {&#34;timestamp&#34;: int(time.time()) }}, upsert=False)
+                print(&#34;Modified &#34; + str(response.modified_count) + &#34; entries&#34;)
+
+                # TODO implement some kind of error handling and return False in
+                # case there is an error
+                return True
+
+
+        def updateDB(self):
+                &#34;&#34;&#34;
+                Update players in database from r.io and wcl
+                &#34;&#34;&#34;
+                pass
+
+        def login(self, usr: str, pwd: str):
+                &#34;&#34;&#34;
+                Check login information
+                &#34;&#34;&#34;
+
+                settings = self.db.getSettings()
+
+                boolusr=False
+                boolpwd=False
+
+                # check admin credentials
+                if settings[&#34;adminname&#34;] == usr:
+                        boolusr=True
+                if settings[&#34;adminpwd&#34;] == pwd:
+                        boolpwd=True
+
+                if boolusr and boolpwd:
+                        return boolusr, boolpwd
+                else:
+                        #check additional login table for officers etc
+                        #TODO
+                        return boolusr, boolpwd
+
+        def post(self, title: str, content: str):
+                r = self.db.postBlog(title, content)
+
+                return r
+
+        def getUpdateTimestamp(self):
+                return self.db.getSettings()[&#34;timestamp&#34;]
+
+
+        def editPlayerRole(self, playername: str, playerrole: str, automated: bool):
+                self.db.updateRole(playername, playerrole, automated)
+
+
+        def getSideBar(self):
+                &#34;&#34;&#34;
+                Get raid progress of guild from raider.io
+                &#34;&#34;&#34;
+
+                # TODO
+                return [[{&#34;name&#34;: &#34;testiraidi&#34;, &#34;normalperc&#34;: 100, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 45, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 15, &#34;mythicprog&#34;: &#34;5/100&#34; },
+                                {&#34;name&#34;: &#34;testiraidi2&#34;, &#34;normalperc&#34;: 80, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 75, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 35, &#34;mythicprog&#34;: &#34;5/100&#34; }]]</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="raidaudit.backend.Backend.bnet"><code class="name">var <span class="ident">bnet</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="raidaudit.backend.Backend.db"><code class="name">var <span class="ident">db</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="raidaudit.backend.Backend.raiderrank"><code class="name">var <span class="ident">raiderrank</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="raidaudit.backend.Backend.rio"><code class="name">var <span class="ident">rio</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="raidaudit.backend.Backend.wcl"><code class="name">var <span class="ident">wcl</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="raidaudit.backend.Backend.addPlayer"><code class="name flex">
+<span>def <span class="ident">addPlayer</span></span>(<span>self, player: Dict[str, str]) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add player to roster manually</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def addPlayer(self, player: Dict[str, str]) -&gt; bool:
+        &#34;&#34;&#34;
+        Add player to roster manually
+        &#34;&#34;&#34;
+
+        self.db.addPlayer(player[&#34;name&#34;],player[&#34;Class&#34;],player[&#34;Role&#34;])
+
+        return True</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.editPlayerRole"><code class="name flex">
+<span>def <span class="ident">editPlayerRole</span></span>(<span>self, playername: str, playerrole: str, automated: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def editPlayerRole(self, playername: str, playerrole: str, automated: bool):
+        self.db.updateRole(playername, playerrole, automated)</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.getBlog"><code class="name flex">
+<span>def <span class="ident">getBlog</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get blog posts</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getBlog(self):
+        &#34;&#34;&#34;
+        Get blog posts
+        &#34;&#34;&#34;
+        data = self.db.getBlog()
+        return data</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.getLogs"><code class="name flex">
+<span>def <span class="ident">getLogs</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get most recent logs for guild from WCL</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getLogs(self):
+        &#34;&#34;&#34;
+        Get most recent logs for guild from WCL
+        &#34;&#34;&#34;
+
+        data = json.loads(self.wcl.getGuildLogs())
+
+        if &#34;error&#34; in data:
+                
+                data = [{&#34;title&#34;: &#34;Error!&#34;, &#34;start&#34;: data[&#34;error&#34;], &#34;id&#34;: &#34; &#34;}]
+
+        elif len(data) &gt; 10:
+                data = data[0:10]
+
+        for row in data:
+                row[&#34;start&#34;] = time.strftime(&#39;%Y-%m-%d&#39;, time.localtime(int(row[&#34;start&#34;]/1000)))
+
+        return data</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.getSideBar"><code class="name flex">
+<span>def <span class="ident">getSideBar</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get raid progress of guild from raider.io</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getSideBar(self):
+        &#34;&#34;&#34;
+        Get raid progress of guild from raider.io
+        &#34;&#34;&#34;
+
+        # TODO
+        return [[{&#34;name&#34;: &#34;testiraidi&#34;, &#34;normalperc&#34;: 100, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 45, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 15, &#34;mythicprog&#34;: &#34;5/100&#34; },
+                        {&#34;name&#34;: &#34;testiraidi2&#34;, &#34;normalperc&#34;: 80, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 75, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 35, &#34;mythicprog&#34;: &#34;5/100&#34; }]]</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.getSingleBlog"><code class="name flex">
+<span>def <span class="ident">getSingleBlog</span></span>(<span>self, id: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get a single blog post with id</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getSingleBlog(self, id: str):
+        &#34;&#34;&#34;
+        Get a single blog post with id
+        &#34;&#34;&#34;
+        # TODO create a db.py method for getting single blog, this is ugly
+        return self.db.db.blog.find_one({&#34;id&#34;: id})</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.getUpdateTimestamp"><code class="name flex">
+<span>def <span class="ident">getUpdateTimestamp</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getUpdateTimestamp(self):
+        return self.db.getSettings()[&#34;timestamp&#34;]</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.getView"><code class="name flex">
+<span>def <span class="ident">getView</span></span>(<span>self) ‑> List[Dict[str, str]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get data for roster table</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getView(self) -&gt; List[Dict[str, str]]:
+        &#34;&#34;&#34;
+        Get data for roster table
+        &#34;&#34;&#34;
+
+        def sorter(item) -&gt; Tuple[int, str]:
+                roleprio = 0
+                if item[&#34;Role&#34;] == &#34;Tank&#34;:
+                        roleprio = 1
+                elif item[&#34;Role&#34;] == &#34;Healer&#34;:
+                        roleprio = 2
+                elif item[&#34;Role&#34;] == &#34;DPS&#34;:
+                        roleprio = 3
+                else:
+                        roleprio = 4
+
+                return (roleprio, item[&#34;name&#34;])
+        
+        data = self.db.getIndex()
+
+        listed = sorted(data, key=sorter)
+
+        return listed</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.login"><code class="name flex">
+<span>def <span class="ident">login</span></span>(<span>self, usr: str, pwd: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check login information</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def login(self, usr: str, pwd: str):
+        &#34;&#34;&#34;
+        Check login information
+        &#34;&#34;&#34;
+
+        settings = self.db.getSettings()
+
+        boolusr=False
+        boolpwd=False
+
+        # check admin credentials
+        if settings[&#34;adminname&#34;] == usr:
+                boolusr=True
+        if settings[&#34;adminpwd&#34;] == pwd:
+                boolpwd=True
+
+        if boolusr and boolpwd:
+                return boolusr, boolpwd
+        else:
+                #check additional login table for officers etc
+                #TODO
+                return boolusr, boolpwd</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.post"><code class="name flex">
+<span>def <span class="ident">post</span></span>(<span>self, title: str, content: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def post(self, title: str, content: str):
+        r = self.db.postBlog(title, content)
+
+        return r</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.removePlayer"><code class="name flex">
+<span>def <span class="ident">removePlayer</span></span>(<span>self, player)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remove player from roster</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def removePlayer(self, player):
+        &#34;&#34;&#34;
+        Remove player from roster
+        &#34;&#34;&#34;
+        pass</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.updateDB"><code class="name flex">
+<span>def <span class="ident">updateDB</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update players in database from r.io and wcl</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def updateDB(self):
+        &#34;&#34;&#34;
+        Update players in database from r.io and wcl
+        &#34;&#34;&#34;
+        pass</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.updateRoster"><code class="name flex">
+<span>def <span class="ident">updateRoster</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update roster data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def updateRoster(self):
+        &#34;&#34;&#34;
+        Update roster data
+        &#34;&#34;&#34;
+        # get raiders from bnet
+        roster = self.bnet.getRoster()
+        manuals = self.db.getManualPlayers()
+
+        print(roster)
+        print(manuals)
+
+        # iterate over players and get full data
+        for i in roster:
+                tmp = { &#34;name&#34;: &#34;&#34;,
+                                &#34;Class&#34;: &#34;&#34;,
+                                &#34;Role&#34;: &#34;&#34;,
+                                &#34;ilv&#34;: 0.0,
+                                &#34;Weekly&#34;: 0,
+                                &#34;rio&#34;: 0.0,
+                                &#34;wcln&#34;: 0.0,
+                                &#34;wclh&#34;: 0.0,
+                                &#34;wclm&#34;: 0.0
+                }
+
+                name = i[&#34;name&#34;]
+                cclass = i[&#34;class&#34;]
+
+                tmp[&#34;name&#34;] = name
+                tmp[&#34;Class&#34;] = cclass
+                tmp[&#34;Role&#34;] = self.db.findRole(name)
+
+                print(&#34;Getting ilv from battle.net profile for &#34; + name)
+                bnetprofile = self.bnet.getCharacterProfile(name)
+                tmp[&#34;ilv&#34;] = bnetprofile[&#34;average_item_level&#34;]
+
+                print(&#34;Getting m+ data from raider.io for &#34; + name)
+                rioprofile = self.rio.getProfile(name)
+
+                # will return empty list if there are no runs for the week
+                if len(rioprofile[&#34;mythic_plus_weekly_highest_level_runs&#34;]) == 0:
+                        tmp[&#34;Weekly&#34;] = 0
+                else:
+                        tmp[&#34;Weekly&#34;] = int(rioprofile[&#34;mythic_plus_weekly_highest_level_runs&#34;][0][&#34;mythic_level&#34;])
+
+                # in case of no data, should still return 0 as a score
+                tmp[&#34;rio&#34;] = float( rioprofile[&#34;mythic_plus_scores_by_season&#34;][0][&#34;scores&#34;][&#34;all&#34;] )
+
+
+                wclperf = self.wcl.getPlayerAvg(name)
+
+                tmp[&#34;wcln&#34;] = wclperf[&#34;avgN&#34;]
+                tmp[&#34;wclh&#34;] = wclperf[&#34;avgH&#34;]
+                tmp[&#34;wclm&#34;] = wclperf[&#34;avgM&#34;]
+
+                dbquery = {&#34;name&#34;: name}
+                dbnewdata = { &#34;$set&#34;: tmp }
+                
+                # push updated automated players to DB
+                # TODO create a method for updating in db.py this is ugly
+                self.db.db.autoplayers.update_one(dbquery, dbnewdata, upsert=True)
+        
+
+        # TODO refactor this to have only one loop / function call
+        # ugly repeating loop
+
+        for i in manuals:
+                tmp = { &#34;name&#34;: &#34;&#34;,
+                                &#34;Class&#34;: &#34;&#34;,
+                                &#34;Role&#34;: &#34;&#34;,
+                                &#34;ilv&#34;: 0.0,
+                                &#34;Weekly&#34;: 0,
+                                &#34;rio&#34;: 0.0,
+                                &#34;wcln&#34;: 0.0,
+                                &#34;wclh&#34;: 0.0,
+                                &#34;wclm&#34;: 0.0
+                }
+
+                name = i[&#34;name&#34;]
+                cclass = i[&#34;Class&#34;]
+
+                tmp[&#34;name&#34;] = name
+                tmp[&#34;Class&#34;] = cclass
+                tmp[&#34;Role&#34;] = self.db.findRole(name)
+
+                print(&#34;Getting ilv from battle.net profile for &#34; + name)
+                bnetprofile = self.bnet.getCharacterProfile(name)
+                tmp[&#34;ilv&#34;] = bnetprofile[&#34;average_item_level&#34;]
+
+                print(&#34;Getting m+ data from raider.io for &#34; + name)
+                rioprofile = self.rio.getProfile(name)
+                # will return empty list if there are no runs for the week
+                if len(rioprofile[&#34;mythic_plus_weekly_highest_level_runs&#34;]) == 0:
+                        tmp[&#34;Weekly&#34;] = 0
+                else:
+                        tmp[&#34;Weekly&#34;] = int(rioprofile[&#34;mythic_plus_weekly_highest_level_runs&#34;][0][&#34;mythic_level&#34;])
+                
+                tmp[&#34;rio&#34;] = float( rioprofile[&#34;mythic_plus_scores_by_season&#34;][0][&#34;scores&#34;][&#34;all&#34;] )
+
+
+                wclperf = self.wcl.getPlayerAvg(name)
+
+                tmp[&#34;wcln&#34;] = wclperf[&#34;avgN&#34;]
+                tmp[&#34;wclh&#34;] = wclperf[&#34;avgH&#34;]
+                tmp[&#34;wclm&#34;] = wclperf[&#34;avgM&#34;]
+
+                dbquery = {&#34;name&#34;: name}
+                dbnewdata =  { &#34;$set&#34;: tmp }
+                
+                # push updated automated players to DB
+                # TODO create a method for updating in db.py this is ugly
+                self.db.db.players.update_one(dbquery, dbnewdata, upsert=True)
+
+
+        #Update updating time to settings
+        #TODO this needs methods, ugly
+        print(&#34;Setting update timestamp to &#34; + str(int(time.time())) )
+        response = self.db.db.settings.update_one({}, {&#34;$set&#34;: {&#34;timestamp&#34;: int(time.time()) }}, upsert=False)
+        print(&#34;Modified &#34; + str(response.modified_count) + &#34; entries&#34;)
+
+        # TODO implement some kind of error handling and return False in
+        # case there is an error
+        return True</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.backend.Backend.updateView"><code class="name flex">
+<span>def <span class="ident">updateView</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update view tables from db</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def updateView(self):
+        &#34;&#34;&#34;
+        Update view tables from db
+        &#34;&#34;&#34;
+        pass</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="raidaudit" href="index.html">raidaudit</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="raidaudit.backend.Backend" href="#raidaudit.backend.Backend">Backend</a></code></h4>
+<ul class="two-column">
+<li><code><a title="raidaudit.backend.Backend.addPlayer" href="#raidaudit.backend.Backend.addPlayer">addPlayer</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.bnet" href="#raidaudit.backend.Backend.bnet">bnet</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.db" href="#raidaudit.backend.Backend.db">db</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.editPlayerRole" href="#raidaudit.backend.Backend.editPlayerRole">editPlayerRole</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.getBlog" href="#raidaudit.backend.Backend.getBlog">getBlog</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.getLogs" href="#raidaudit.backend.Backend.getLogs">getLogs</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.getSideBar" href="#raidaudit.backend.Backend.getSideBar">getSideBar</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.getSingleBlog" href="#raidaudit.backend.Backend.getSingleBlog">getSingleBlog</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.getUpdateTimestamp" href="#raidaudit.backend.Backend.getUpdateTimestamp">getUpdateTimestamp</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.getView" href="#raidaudit.backend.Backend.getView">getView</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.login" href="#raidaudit.backend.Backend.login">login</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.post" href="#raidaudit.backend.Backend.post">post</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.raiderrank" href="#raidaudit.backend.Backend.raiderrank">raiderrank</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.removePlayer" href="#raidaudit.backend.Backend.removePlayer">removePlayer</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.rio" href="#raidaudit.backend.Backend.rio">rio</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.updateDB" href="#raidaudit.backend.Backend.updateDB">updateDB</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.updateRoster" href="#raidaudit.backend.Backend.updateRoster">updateRoster</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.updateView" href="#raidaudit.backend.Backend.updateView">updateView</a></code></li>
+<li><code><a title="raidaudit.backend.Backend.wcl" href="#raidaudit.backend.Backend.wcl">wcl</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.3</a>.</p>
+</footer>
+</body>
+</html>
