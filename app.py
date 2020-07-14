@@ -14,6 +14,7 @@ backend = Backend()
 
 @app.route('/')
 def index():
+    sidebar = backend.getSideBar()
     roster = backend.getView()
     logs = backend.getLogs()
     user = None
@@ -33,33 +34,35 @@ def index():
 
     if 'username' in session:
         user = session['username']
-    return render_template('index.html', sub=sub, user=user, data=roster, logs=logs, updated=updated)
+    return render_template('index.html', sub=sub, user=user, data=roster, logs=logs, updated=updated, sidebar=sidebar)
 
 @app.route('/blog')
 @app.route('/blog/<int:id>')
 def blog(id=None):
+    sidebar = backend.getSideBar()
     if id is None:
         posts = backend.getBlog()
         user = None
         if 'username' in session:
             user = session['username']
-        return render_template('blog.html', sub=sub,user=user, posts=posts, single=False)
+        return render_template('blog.html', sub=sub,user=user, posts=posts, single=False, sidebar=sidebar)
     else:
         post = backend.getSingleBlog(id)
         if 'username' in session:
             user = session['username']
-        return render_template('blog.html', sub=sub,user=user, post=post, single=True)
+        return render_template('blog.html', sub=sub,user=user, post=post, single=True, sidebar=sidebar)
 
 
 @app.route('/admin')
 def admin():
 
     players = backend.getView()
+    sidebar = backend.getSideBar()
 
     user = None
     if 'username' in session:
         user = session['username']
-        return render_template('admin.html', sub=sub, user=user, players=players)
+        return render_template('admin.html', sub=sub, user=user, players=players, sidebar=sidebar)
     else:
         flash("Please login!")
         return redirect(url_for('index'))

@@ -33,3 +33,15 @@ h1 {
 .card-footer {
     background-color: #383b3f;
 }
+
+h4 {
+    color: #ffffff;
+}
+
+p.raiddifficulty {
+    color:#ffffff;
+}
+
+p.raidname {
+    color: #ffffff;
+}
