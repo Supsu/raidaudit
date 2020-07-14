@@ -7,10 +7,11 @@ app = Flask(__name__)
 
 app.secret_key = 'uaiYSaYISUS41567YDabhY&WQT23YTEEiubz'
 
-#subtitle for template
+# subtitle for template
 sub = "Pulumafia (H) | Stormscale-EU"
 
 backend = Backend()
+
 
 @app.route('/')
 def index():
@@ -35,6 +36,7 @@ def index():
     if 'username' in session:
         user = session['username']
     return render_template('index.html', sub=sub, user=user, data=roster, logs=logs, updated=updated, sidebar=sidebar)
+
 
 @app.route('/blog')
 @app.route('/blog/<int:id>')
