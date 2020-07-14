@@ -57,7 +57,7 @@ def index():
     else:
         timenow = time.time()
         delta = timenow-updatetime
-        updated = time.strftime("%H hours, %M minutes, %S seconds ago", time.gmtime(delta))
+        updated = time.strftime("%d days, %H hours, %M minutes, %S seconds ago", time.gmtime(delta))
 
     if 'username' in session:
         user = session['username']

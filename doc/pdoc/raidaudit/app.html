@@ -91,7 +91,7 @@ def index():
     else:
         timenow = time.time()
         delta = timenow-updatetime
-        updated = time.strftime(&#34;%H hours, %M minutes, %S seconds ago&#34;, time.gmtime(delta))
+        updated = time.strftime(&#34;%d days, %H hours, %M minutes, %S seconds ago&#34;, time.gmtime(delta))
 
     if &#39;username&#39; in session:
         user = session[&#39;username&#39;]
@@ -102,7 +102,7 @@ def index():
 @app.route(&#39;/blog/&lt;int:id&gt;&#39;)
 def blog(id=None):
     &#34;&#34;&#34;
-    Responds to routes &#39;/blog&#39; and &#39;/blog/&lt;int:id&gt;&#39;.
+    Responds to routes &#39;/blog&#39; and &#39;/blog/id&#39;.
     
     If no ID is given returns blog posts
     gotten from backeng.getBlog() and with ID backend.getSingleBlog(id). Returns 
@@ -365,7 +365,7 @@ def admin():
 <span>def <span class="ident">blog</span></span>(<span>id=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Responds to routes '/blog' and '/blog/<int:id>'.</p>
+<div class="desc"><p>Responds to routes '/blog' and '/blog/id'.</p>
 <p>If no ID is given returns blog posts
 gotten from backeng.getBlog() and with ID backend.getSingleBlog(id). Returns
 flask.render_template('blog.html') with required data.</p></div>
@@ -377,7 +377,7 @@ flask.render_template('blog.html') with required data.</p></div>
 @app.route(&#39;/blog/&lt;int:id&gt;&#39;)
 def blog(id=None):
     &#34;&#34;&#34;
-    Responds to routes &#39;/blog&#39; and &#39;/blog/&lt;int:id&gt;&#39;.
+    Responds to routes &#39;/blog&#39; and &#39;/blog/id&#39;.
     
     If no ID is given returns blog posts
     gotten from backeng.getBlog() and with ID backend.getSingleBlog(id). Returns 
@@ -472,7 +472,7 @@ def index():
     else:
         timenow = time.time()
         delta = timenow-updatetime
-        updated = time.strftime(&#34;%H hours, %M minutes, %S seconds ago&#34;, time.gmtime(delta))
+        updated = time.strftime(&#34;%d days, %H hours, %M minutes, %S seconds ago&#34;, time.gmtime(delta))
 
     if &#39;username&#39; in session:
         user = session[&#39;username&#39;]
