@@ -35,11 +35,13 @@ class RIO:
 
     _region = &#34;&#34;
     _realm = &#34;&#34;
+    _guild = &#34;&#34;
     
     def __init__(self):
         load_dotenv()
         self._realm = os.getenv(&#34;WOWREALM&#34;)
         self._region = os.getenv(&#34;WOWREGION&#34;)
+        self._guild = os.getenv(&#34;WOWGUILD&#34;)
 
 
     def getProfile(self, charname: str):
@@ -52,11 +54,85 @@ class RIO:
         r = requests.get(url)
         return r.json()
 
+    def getRaidProgress(self):
+        &#34;&#34;&#34;
+        &#34;&#34;&#34;
+
+        def sorter(item):
+            &#34;&#34;&#34;
+            Sort raids by their release date.
+
+            Since there doesn&#39;t seem to be a good API to get raid releases in order,
+            this sorter has to be manually updated. 
+
+            TODO try handling sorting somehow with battle.net journal api
+            &#34;&#34;&#34;
+            roleprio = 9999
+            raidlist = {
+                &#34;uldir&#34;: 800,
+                &#34;crucible-of-storms&#34;:805,
+                &#34;battle-of-dazaralor&#34;:810,
+                &#34;the-eternal-palace&#34;:820,
+                &#34;nyalotha-the-waking-city&#34;:830
+            }
+
+
+            if item[&#34;name&#34;] in raidlist:
+                roleprio = raidlist[item[&#34;name&#34;]]
+            
+
+            return (roleprio, item[&#34;name&#34;])
+
+        url = &#34;https://raider.io/api/v1/guilds/profile?region=&#34; + self._region + &#34;&amp;realm=&#34; + self._realm + &#34;&amp;name=&#34; + self._guild
+        url = url + &#34;&amp;fields=raid_progression&#34;
+
+        # TODO create cache to database so app doesn&#39;t query API every time the page is loaded
+
+        r = requests.get(url).json()
+
+        raids = []
+
+        for raid in r[&#34;raid_progression&#34;]:
+            &#34;&#34;&#34;
+            Creates dict entities that have the data wanted for display
+            &#34;&#34;&#34;
+            tmp = {
+                &#34;name&#34;: raid,
+                &#34;normalperc&#34;: 0,
+                &#34;normalprog&#34;: 0,
+                &#34;heroicperc&#34;: 0,
+                &#34;heroicprog&#34;: 0,
+                &#34;mythicperc&#34;: 0,
+                &#34;mythicprog&#34;: 0
+            }
+
+            totalbosses = r[&#34;raid_progression&#34;][raid][&#34;total_bosses&#34;]
+
+            tmp[&#34;normalprog&#34;] = str(r[&#34;raid_progression&#34;][raid][&#34;normal_bosses_killed&#34;]) + &#34;/&#34; + str(totalbosses)
+            tmp[&#34;normalperc&#34;] = int(r[&#34;raid_progression&#34;][raid][&#34;normal_bosses_killed&#34;]) / int(totalbosses) *100
+
+            tmp[&#34;heroicprog&#34;] = str(r[&#34;raid_progression&#34;][raid][&#34;heroic_bosses_killed&#34;]) + &#34;/&#34; + str(totalbosses)
+            tmp[&#34;heroicperc&#34;] = int(r[&#34;raid_progression&#34;][raid][&#34;heroic_bosses_killed&#34;]) / int(totalbosses) *100
+
+            tmp[&#34;mythicprog&#34;] = str(r[&#34;raid_progression&#34;][raid][&#34;mythic_bosses_killed&#34;]) + &#34;/&#34; + str(totalbosses)
+            tmp[&#34;mythicperc&#34;] = int(r[&#34;raid_progression&#34;][raid][&#34;mythic_bosses_killed&#34;]) / int(totalbosses) *100
+
+            raids.append(tmp)
+
+
+        
+
+        # sort by raid release patch, newest (biggest patch number) first
+        raids = sorted(raids, key=sorter, reverse=True)
+
+        # TODO see if battle.net API allows getting proper display names for zones with slugs
+
+
+        return raids
 
 if __name__ == &#34;__main__&#34;:
-    print(&#34;Testing RIO&#34;)
     rio = RIO()
-    print(rio.getMplus(&#34;pirimake&#34;))</code></pre>
+    rio.getRaidProgress()</code></pre>
 </details>
 </section>
 <section>
@@ -81,11 +157,13 @@ if __name__ == &#34;__main__&#34;:
 
     _region = &#34;&#34;
     _realm = &#34;&#34;
+    _guild = &#34;&#34;
     
     def __init__(self):
         load_dotenv()
         self._realm = os.getenv(&#34;WOWREALM&#34;)
         self._region = os.getenv(&#34;WOWREGION&#34;)
+        self._guild = os.getenv(&#34;WOWGUILD&#34;)
 
 
     def getProfile(self, charname: str):
@@ -96,7 +174,83 @@ if __name__ == &#34;__main__&#34;:
         url = url + &#34;&amp;fields=mythic_plus_weekly_highest_level_runs,mythic_plus_scores_by_season:current&#34;
 
         r = requests.get(url)
-        return r.json()</code></pre>
+        return r.json()
+
+    def getRaidProgress(self):
+        &#34;&#34;&#34;
+        &#34;&#34;&#34;
+
+        def sorter(item):
+            &#34;&#34;&#34;
+            Sort raids by their release date.
+
+            Since there doesn&#39;t seem to be a good API to get raid releases in order,
+            this sorter has to be manually updated. 
+
+            TODO try handling sorting somehow with battle.net journal api
+            &#34;&#34;&#34;
+            roleprio = 9999
+            raidlist = {
+                &#34;uldir&#34;: 800,
+                &#34;crucible-of-storms&#34;:805,
+                &#34;battle-of-dazaralor&#34;:810,
+                &#34;the-eternal-palace&#34;:820,
+                &#34;nyalotha-the-waking-city&#34;:830
+            }
+
+
+            if item[&#34;name&#34;] in raidlist:
+                roleprio = raidlist[item[&#34;name&#34;]]
+            
+
+            return (roleprio, item[&#34;name&#34;])
+
+        url = &#34;https://raider.io/api/v1/guilds/profile?region=&#34; + self._region + &#34;&amp;realm=&#34; + self._realm + &#34;&amp;name=&#34; + self._guild
+        url = url + &#34;&amp;fields=raid_progression&#34;
+
+        # TODO create cache to database so app doesn&#39;t query API every time the page is loaded
+
+        r = requests.get(url).json()
+
+        raids = []
+
+        for raid in r[&#34;raid_progression&#34;]:
+            &#34;&#34;&#34;
+            Creates dict entities that have the data wanted for display
+            &#34;&#34;&#34;
+            tmp = {
+                &#34;name&#34;: raid,
+                &#34;normalperc&#34;: 0,
+                &#34;normalprog&#34;: 0,
+                &#34;heroicperc&#34;: 0,
+                &#34;heroicprog&#34;: 0,
+                &#34;mythicperc&#34;: 0,
+                &#34;mythicprog&#34;: 0
+            }
+
+            totalbosses = r[&#34;raid_progression&#34;][raid][&#34;total_bosses&#34;]
+
+            tmp[&#34;normalprog&#34;] = str(r[&#34;raid_progression&#34;][raid][&#34;normal_bosses_killed&#34;]) + &#34;/&#34; + str(totalbosses)
+            tmp[&#34;normalperc&#34;] = int(r[&#34;raid_progression&#34;][raid][&#34;normal_bosses_killed&#34;]) / int(totalbosses) *100
+
+            tmp[&#34;heroicprog&#34;] = str(r[&#34;raid_progression&#34;][raid][&#34;heroic_bosses_killed&#34;]) + &#34;/&#34; + str(totalbosses)
+            tmp[&#34;heroicperc&#34;] = int(r[&#34;raid_progression&#34;][raid][&#34;heroic_bosses_killed&#34;]) / int(totalbosses) *100
+
+            tmp[&#34;mythicprog&#34;] = str(r[&#34;raid_progression&#34;][raid][&#34;mythic_bosses_killed&#34;]) + &#34;/&#34; + str(totalbosses)
+            tmp[&#34;mythicperc&#34;] = int(r[&#34;raid_progression&#34;][raid][&#34;mythic_bosses_killed&#34;]) / int(totalbosses) *100
+
+            raids.append(tmp)
+
+
+        
+
+        # sort by raid release patch, newest (biggest patch number) first
+        raids = sorted(raids, key=sorter, reverse=True)
+
+        # TODO see if battle.net API allows getting proper display names for zones with slugs
+
+
+        return raids</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -118,6 +272,92 @@ if __name__ == &#34;__main__&#34;:
 
     r = requests.get(url)
     return r.json()</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.rio.RIO.getRaidProgress"><code class="name flex">
+<span>def <span class="ident">getRaidProgress</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getRaidProgress(self):
+    &#34;&#34;&#34;
+    &#34;&#34;&#34;
+
+    def sorter(item):
+        &#34;&#34;&#34;
+        Sort raids by their release date.
+
+        Since there doesn&#39;t seem to be a good API to get raid releases in order,
+        this sorter has to be manually updated. 
+
+        TODO try handling sorting somehow with battle.net journal api
+        &#34;&#34;&#34;
+        roleprio = 9999
+        raidlist = {
+            &#34;uldir&#34;: 800,
+            &#34;crucible-of-storms&#34;:805,
+            &#34;battle-of-dazaralor&#34;:810,
+            &#34;the-eternal-palace&#34;:820,
+            &#34;nyalotha-the-waking-city&#34;:830
+        }
+
+
+        if item[&#34;name&#34;] in raidlist:
+            roleprio = raidlist[item[&#34;name&#34;]]
+        
+
+        return (roleprio, item[&#34;name&#34;])
+
+    url = &#34;https://raider.io/api/v1/guilds/profile?region=&#34; + self._region + &#34;&amp;realm=&#34; + self._realm + &#34;&amp;name=&#34; + self._guild
+    url = url + &#34;&amp;fields=raid_progression&#34;
+
+    # TODO create cache to database so app doesn&#39;t query API every time the page is loaded
+
+    r = requests.get(url).json()
+
+    raids = []
+
+    for raid in r[&#34;raid_progression&#34;]:
+        &#34;&#34;&#34;
+        Creates dict entities that have the data wanted for display
+        &#34;&#34;&#34;
+        tmp = {
+            &#34;name&#34;: raid,
+            &#34;normalperc&#34;: 0,
+            &#34;normalprog&#34;: 0,
+            &#34;heroicperc&#34;: 0,
+            &#34;heroicprog&#34;: 0,
+            &#34;mythicperc&#34;: 0,
+            &#34;mythicprog&#34;: 0
+        }
+
+        totalbosses = r[&#34;raid_progression&#34;][raid][&#34;total_bosses&#34;]
+
+        tmp[&#34;normalprog&#34;] = str(r[&#34;raid_progression&#34;][raid][&#34;normal_bosses_killed&#34;]) + &#34;/&#34; + str(totalbosses)
+        tmp[&#34;normalperc&#34;] = int(r[&#34;raid_progression&#34;][raid][&#34;normal_bosses_killed&#34;]) / int(totalbosses) *100
+
+        tmp[&#34;heroicprog&#34;] = str(r[&#34;raid_progression&#34;][raid][&#34;heroic_bosses_killed&#34;]) + &#34;/&#34; + str(totalbosses)
+        tmp[&#34;heroicperc&#34;] = int(r[&#34;raid_progression&#34;][raid][&#34;heroic_bosses_killed&#34;]) / int(totalbosses) *100
+
+        tmp[&#34;mythicprog&#34;] = str(r[&#34;raid_progression&#34;][raid][&#34;mythic_bosses_killed&#34;]) + &#34;/&#34; + str(totalbosses)
+        tmp[&#34;mythicperc&#34;] = int(r[&#34;raid_progression&#34;][raid][&#34;mythic_bosses_killed&#34;]) / int(totalbosses) *100
+
+        raids.append(tmp)
+
+
+    
+
+    # sort by raid release patch, newest (biggest patch number) first
+    raids = sorted(raids, key=sorter, reverse=True)
+
+    # TODO see if battle.net API allows getting proper display names for zones with slugs
+
+
+    return raids</code></pre>
 </details>
 </dd>
 </dl>
@@ -142,6 +382,7 @@ if __name__ == &#34;__main__&#34;:
 <h4><code><a title="raidaudit.rio.RIO" href="#raidaudit.rio.RIO">RIO</a></code></h4>
 <ul class="">
 <li><code><a title="raidaudit.rio.RIO.getProfile" href="#raidaudit.rio.RIO.getProfile">getProfile</a></code></li>
+<li><code><a title="raidaudit.rio.RIO.getRaidProgress" href="#raidaudit.rio.RIO.getRaidProgress">getRaidProgress</a></code></li>
 </ul>
 </li>
 </ul>

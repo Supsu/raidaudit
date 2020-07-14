@@ -41,7 +41,7 @@ def index():
     """
 
     sidebar = backend.getSideBar()
-    sidebar.append({"version": version})
+    sidebar[1] = {"version": version}
     roster = backend.getView()
     logs = backend.getLogs()
     user = None

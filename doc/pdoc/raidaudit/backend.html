@@ -298,12 +298,22 @@ class Backend:
 
         def getSideBar(self):
                 &#34;&#34;&#34;
-                Get raid progress of guild from raider.io
-                &#34;&#34;&#34;
+                Gets data for sidebar.
 
-                # TODO
-                return [[{&#34;name&#34;: &#34;testiraidi&#34;, &#34;normalperc&#34;: 100, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 45, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 15, &#34;mythicprog&#34;: &#34;5/100&#34; },
-                                {&#34;name&#34;: &#34;testiraidi2&#34;, &#34;normalperc&#34;: 80, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 75, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 35, &#34;mythicprog&#34;: &#34;5/100&#34; }]]
+                Initializes a sidebar element list.
+                Calls rio.py method getRaidProgress() to get raid progress from raider.io
+
+                Returns:
+                        List of sidebar entities, where [0] is reserved for raid progress and [1] for raidaudit version
+                &#34;&#34;&#34;
+                sidebar = [{&#34;progress&#34;: &#34;NA&#34;}, {&#34;version&#34;: &#34;NA&#34;}]
+
+                progress = self.rio.getRaidProgress()
+                sidebar[0] = progress
+                return sidebar
+                
+                #[[{&#34;name&#34;: &#34;testiraidi&#34;, &#34;normalperc&#34;: 100, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 45, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 15, &#34;mythicprog&#34;: &#34;5/100&#34; },
+                #{&#34;name&#34;: &#34;testiraidi2&#34;, &#34;normalperc&#34;: 80, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 75, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 35, &#34;mythicprog&#34;: &#34;5/100&#34; }]]
 
 if __name__ == &#34;__main__&#34;:
         back = Backend()
@@ -592,12 +602,19 @@ if __name__ == &#34;__main__&#34;:
 
         def getSideBar(self):
                 &#34;&#34;&#34;
-                Get raid progress of guild from raider.io
-                &#34;&#34;&#34;
+                Gets data for sidebar.
 
-                # TODO
-                return [[{&#34;name&#34;: &#34;testiraidi&#34;, &#34;normalperc&#34;: 100, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 45, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 15, &#34;mythicprog&#34;: &#34;5/100&#34; },
-                                {&#34;name&#34;: &#34;testiraidi2&#34;, &#34;normalperc&#34;: 80, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 75, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 35, &#34;mythicprog&#34;: &#34;5/100&#34; }]]</code></pre>
+                Initializes a sidebar element list.
+                Calls rio.py method getRaidProgress() to get raid progress from raider.io
+
+                Returns:
+                        List of sidebar entities, where [0] is reserved for raid progress and [1] for raidaudit version
+                &#34;&#34;&#34;
+                sidebar = [{&#34;progress&#34;: &#34;NA&#34;}, {&#34;version&#34;: &#34;NA&#34;}]
+
+                progress = self.rio.getRaidProgress()
+                sidebar[0] = progress
+                return sidebar</code></pre>
 </details>
 <h3>Class variables</h3>
 <dl>
@@ -706,19 +723,30 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">getSideBar</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get raid progress of guild from raider.io</p></div>
+<div class="desc"><p>Gets data for sidebar.</p>
+<p>Initializes a sidebar element list.
+Calls rio.py method getRaidProgress() to get raid progress from raider.io</p>
+<h2 id="returns">Returns</h2>
+<p>List of sidebar entities, where [0] is reserved for raid progress and [1] for raidaudit version</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def getSideBar(self):
         &#34;&#34;&#34;
-        Get raid progress of guild from raider.io
-        &#34;&#34;&#34;
+        Gets data for sidebar.
 
-        # TODO
-        return [[{&#34;name&#34;: &#34;testiraidi&#34;, &#34;normalperc&#34;: 100, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 45, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 15, &#34;mythicprog&#34;: &#34;5/100&#34; },
-                        {&#34;name&#34;: &#34;testiraidi2&#34;, &#34;normalperc&#34;: 80, &#34;normalprog&#34;: &#34;1/11&#34;, &#34;heroicperc&#34;: 75, &#34;heroicprog&#34;: &#34;6/12&#34;, &#34;mythicperc&#34;: 35, &#34;mythicprog&#34;: &#34;5/100&#34; }]]</code></pre>
+        Initializes a sidebar element list.
+        Calls rio.py method getRaidProgress() to get raid progress from raider.io
+
+        Returns:
+                List of sidebar entities, where [0] is reserved for raid progress and [1] for raidaudit version
+        &#34;&#34;&#34;
+        sidebar = [{&#34;progress&#34;: &#34;NA&#34;}, {&#34;version&#34;: &#34;NA&#34;}]
+
+        progress = self.rio.getRaidProgress()
+        sidebar[0] = progress
+        return sidebar</code></pre>
 </details>
 </dd>
 <dt id="raidaudit.backend.Backend.getSingleBlog"><code class="name flex">

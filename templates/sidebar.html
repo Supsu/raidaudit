@@ -2,7 +2,7 @@
 {% for raid in sidebar[0] %}
 <div class="card">
     <div class="card-body">
-        <h5 class="raidname card-title">Raid: {{ raid.name }}</h5>
+        <h6 class="raidname card-title">{{ raid.name }}</h6>
         <p class="raiddifficulty card-subtitle">Normal: {{ raid.normalprog }}</p>
         <div class="progress" style="height: 20px;">
             <div class="progress-bar bg-success" role="progressbar" style="width: {{ raid.normalperc }}%;" aria-valuenow="{{ raid.normalperc }}" aria-valuemin="0" aria-valuemax="100"></div>
