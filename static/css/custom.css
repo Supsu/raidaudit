@@ -14,6 +14,11 @@ h1 {
     color: rgb(63, 206, 50);
     text-shadow: 1px 1px 2px white;
     font-family: "Lucida Console", Courier, monospace;
+    text-align: center;
+}
+
+.progress {
+    text-shadow: 2px 2px 2px #000000;
 }
 
 .card {
@@ -32,4 +37,16 @@ h1 {
 
 .card-footer {
     background-color: #383b3f;
+}
+
+h4 {
+    color: #ffffff;
+}
+
+p.raiddifficulty {
+    color:#ffffff;
+}
+
+p.raidname {
+    color: #ffffff;
 }

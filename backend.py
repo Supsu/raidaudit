@@ -265,6 +265,16 @@ class Backend:
 	def editPlayerRole(self, playername, playerrole, automated):
 		self.db.updateRole(playername, playerrole, automated)
 
+
+	def getSideBar(self):
+		"""
+		Get raid progress of guild from raider.io
+		"""
+
+		# TODO
+		return [[{"name": "testiraidi", "normalperc": 100, "normalprog": "1/11", "heroicperc": 45, "heroicprog": "6/12", "mythicperc": 15, "mythicprog": "5/100" },
+				{"name": "testiraidi2", "normalperc": 80, "normalprog": "1/11", "heroicperc": 75, "heroicprog": "6/12", "mythicperc": 35, "mythicprog": "5/100" }]]
+
 if __name__ == "__main__":
 	back = Backend()
 	print(back.getUpdateTimestamp())

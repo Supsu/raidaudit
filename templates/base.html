@@ -15,32 +15,41 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
 
-    <div class="page-header bg-dark">
+
+
+<div class="container">
+    <div class="page-header bg-dark justify-content-center">
         <h1>Raid audit</h1>
     </div>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  </div>
+
+    <div>
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark justify-content-center">
         <a class="navbar-brand" href="#">{{sub}}</a>
-            <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="/">Roster</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/blog">Blog</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
-                  </ul>
-                  <div id="loginbar">
-                    {% if not user %}
-                      <form class="form-inline my-2 my-lg-0" action="login" method="post">
-                        <input class="form-control mr-sm-2" type="text" name="username" placeholder="Username" required>
-                        <input class="form-control mr-sm-2" type="password" name="password" placeholder="Password" required>
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
-                      </form>
-                    {% else %}
-                      <form action="logout", method="GET">
-                      <button type="submit" class="btn btn-outline-success" action="/logout" method="post">
-                        Log out <span class="badge badge-info">{{user}}</span>
-                      </button>
-                    </form>
-                    {% endif %}
-                </div>
-                </nav>
+        <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="/">Roster</a></li>
+            <li class="nav-item"><a class="nav-link" href="/blog">Blog</a></li>
+            <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+        </ul>
+        <div id="loginbar">
+          {% if not user %}
+            <form class="form-inline my-2 my-lg-0" action="login" method="post">
+              <input class="form-control mr-sm-2" type="text" name="username" placeholder="Username" required>
+              <input class="form-control mr-sm-2" type="password" name="password" placeholder="Password" required>
+              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
+            </form>
+          {% else %}
+            <form action="logout", method="GET">
+            <button type="submit" class="btn btn-outline-success" action="/logout" method="post">
+              Log out <span class="badge badge-info">{{user}}</span>
+            </button>
+          </form>
+          {% endif %}
+        </div>
+    </nav>
+  </div>
+
+
     <div class="container bg-dark">
       {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -55,16 +64,18 @@
         {% endif %}
       {% endwith %}
     </div>
-    <div class="container bg-dark">
-        {% block content %}
-            <p>BLOCK</p>
-        {% endblock %}
-    </div>
 
-	<footer class="mt-auto">
-	 <div class="inner">
-		<p>Source available at GitHub <a href="https://github.com/Supsu/raidaudit">Supsu/raidaudit</a></p>
-	 </div>
+
+    <div class="container bg-dark">
+        <div class="row">
+          <div class="col-2">{% include 'sidebar.html' with context %}</div>
+          <div class="col">
+          {% block content %}
+            <p>CONTENT BLOCK</p>
+          {% endblock %}
+        </div>
+      </div>
+    </div>
 
 
   </body>
