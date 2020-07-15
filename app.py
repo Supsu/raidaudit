@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 from backend import Backend
 import time
 import subprocess
+import json
 
 version = ""
 try:
@@ -46,6 +47,9 @@ def index():
     logs = backend.getLogs()
     user = None
 
+    # get data to generate links in roster table
+    linkdata = json.dumps(backend.getLinkInfo())
+
     # get timestamp for last update
     updatetime = backend.getUpdateTimestamp()
     updated = "never"
@@ -61,7 +65,7 @@ def index():
 
     if 'username' in session:
         user = session['username']
-    return render_template('index.html', sub=sub, user=user, data=roster, logs=logs, updated=updated, sidebar=sidebar)
+    return render_template('index.html', sub=sub, user=user, data=roster, logs=logs, updated=updated, sidebar=sidebar, linkdata=linkdata)
 
 
 @app.route('/blog')

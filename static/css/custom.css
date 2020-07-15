@@ -50,3 +50,20 @@ p.raiddifficulty {
 p.raidname {
     color: #ffffff;
 }
+
+.oneline {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow:ellipsis;
+}
+
+td.rostercell {
+    vertical-align: middle;
+    height: 32px;
+    text-align: center;
+}
+
+img.linkimg {
+    width: 20px; 
+    height: 20px;
+}

@@ -6,6 +6,8 @@ from rio import RIO
 from wcl import WCL
 import json
 import time
+from dotenv import load_dotenv
+import os
 
 
 class Backend:
@@ -14,13 +16,17 @@ class Backend:
 	bnet = ""
 	rio = ""
 	wcl = ""
-	raiderrank = 0
+	realm = ""
+	region = ""
 
 	def __init__(self):
+		load_dotenv()
 		self.db = Database()
 		self.bnet = Bnet()
 		self.rio = RIO()
 		self.wcl = WCL()
+		self.region = os.getenv("WOWREGION")
+		self.realm = os.getenv("WOWREALM")
 
 	def getView(self) -> List[Dict[str, str]]:
 		"""
@@ -284,8 +290,26 @@ class Backend:
 		sidebar[0] = progress
 		return sidebar
 		
-		#[[{"name": "testiraidi", "normalperc": 100, "normalprog": "1/11", "heroicperc": 45, "heroicprog": "6/12", "mythicperc": 15, "mythicprog": "5/100" },
-		#{"name": "testiraidi2", "normalperc": 80, "normalprog": "1/11", "heroicperc": 75, "heroicprog": "6/12", "mythicperc": 35, "mythicprog": "5/100" }]]
+
+	def getLinkInfo(self):
+		"""
+		Get realm, region and locale data to generate links to roster table
+		"""
+		info = {
+			"locale": "en-gb",
+			"region": self.region,
+			"realm": self.realm
+		}
+
+		# TODO support all regions? now only eu/us
+		if info["region"] == "us":
+			info["locale"] = "en-us"
+
+		return info
+		
+
+		
+
 
 if __name__ == "__main__":
 	back = Backend()
