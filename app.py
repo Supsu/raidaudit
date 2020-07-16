@@ -8,7 +8,8 @@ Routes are documented with their respective methods. Omitted from docstrings
 of single routes is that every route that corresponds to a rendered
 template also runs backend.getSideBar() to fill the left panel with data.
 """
-from flask import Flask, session, redirect, url_for, request, render_template, flash
+from flask import Flask, session, redirect, url_for, request, render_template
+from flask import flash
 from dotenv import load_dotenv
 from backend import Backend
 import time
@@ -46,9 +47,9 @@ def index():
     """
     Responds to route '/'.
 
-    Gets data required for index page from backend.getView(), 
+    Gets data required for index page from backend.getView(),
     backend.getLogs(), calculates time from last update of roster
-    and returns flask.render_template('index.html') with required data. 
+    and returns flask.render_template('index.html') with required data.
     """
 
     sidebar = backend.getSideBar()
@@ -71,11 +72,17 @@ def index():
     else:
         timenow = time.time()
         delta = timenow-updatetime
-        updated = time.strftime("%d days, %H hours, %M minutes, %S seconds ago", time.gmtime(delta))
+        updated = time.strftime(
+            "%d days, %H hours, %M minutes, %S seconds ago",
+            time.gmtime(delta)
+            )
 
     if 'username' in session:
         user = session['username']
-    return render_template('index.html', sub=sub, user=user, data=roster, logs=logs, updated=updated, sidebar=sidebar, linkdata=linkdata)
+    return render_template(
+        'index.html', sub=sub, user=user, data=roster, logs=logs,
+        updated=updated, sidebar=sidebar, linkdata=linkdata
+        )
 
 
 @app.route('/blog')
@@ -83,10 +90,10 @@ def index():
 def blog(id=None):
     """
     Responds to routes '/blog' and '/blog/id'.
-    
+
     If no ID is given returns blog posts
-    gotten from backeng.getBlog() and with ID backend.getSingleBlog(id). Returns 
-    flask.render_template('blog.html') with required data.
+    gotten from backeng.getBlog() and with ID backend.getSingleBlog(id).
+    Returns flask.render_template('blog.html') with required data.
     """
 
     sidebar = backend.getSideBar()
@@ -95,21 +102,28 @@ def blog(id=None):
         user = None
         if 'username' in session:
             user = session['username']
-        return render_template('blog.html', sub=sub,user=user, posts=posts, single=False, sidebar=sidebar)
+        return render_template(
+            'blog.html', sub=sub, user=user, posts=posts,
+            single=False, sidebar=sidebar
+            )
     else:
         post = backend.getSingleBlog(id)
         if 'username' in session:
             user = session['username']
-        return render_template('blog.html', sub=sub,user=user, post=post, single=True, sidebar=sidebar)
+        return render_template(
+            'blog.html', sub=sub, user=user, post=post,
+            single=True, sidebar=sidebar
+            )
 
 
 @app.route('/admin')
 def admin():
     """
-    Responds to route '/admin'. 
-    
-    Gets player data from backend.getView() and uses flask.render_template('admin.html') to
-    render admin page for logged in user. If there is no session that has username recorded,
+    Responds to route '/admin'.
+
+    Gets player data from backend.getView() and uses
+    flask.render_template('admin.html') to render admin page
+    for logged in user. If there is no session that has username recorded,
     instead redirects to render 'index'.
     """
 
@@ -119,7 +133,9 @@ def admin():
     user = None
     if 'username' in session:
         user = session['username']
-        return render_template('admin.html', sub=sub, user=user, players=players, sidebar=sidebar)
+        return render_template(
+            'admin.html', sub=sub, user=user, players=players, sidebar=sidebar
+            )
     else:
         flash("Please login!")
         return redirect(url_for('index'))
@@ -134,12 +150,12 @@ def postblog():
     backend.post() to store a new blog post into database.
     """
 
-    r=backend.post(request.form['title'], request.form['post'])
+    r = backend.post(request.form['title'], request.form['post'])
     if r:
         flash("Success!")
     else:
         flash("Failure!")
-        
+
     return redirect(url_for('admin'))
 
 
@@ -160,7 +176,9 @@ def login():
     given_username = request.form['username']
     given_pwd = request.form['password']
 
-    username_exists, password_matches = backend.login(given_username, given_pwd)
+    username_exists, password_matches = backend.login(
+        given_username, given_pwd
+        )
 
     if username_exists:
         print("username exists")
@@ -192,8 +210,9 @@ def updateIndex():
     """
     Responds to route '/update'
 
-    This route/method is used to initiate roster update process. Gets time from latest update
-    with backend.getUpdateTimestamp() and time.time(), and if under a minute doesn't continue with
+    This route/method is used to initiate roster update process.
+    Gets time from latest update with backend.getUpdateTimestamp()
+    and time.time(), and if under a minute doesn't continue with
     updating. Otherwise runs backend.updateRoster().
     """
 
@@ -201,9 +220,10 @@ def updateIndex():
     ts = backend.getUpdateTimestamp()
     print(str(int(time.time()) - ts))
 
-    # TODO also make a block in db to not allow multiple updates to run simultaneously
+    # TODO also make a block in db to not allow multiple updates to
+    # run simultaneously
     if int(time.time()) - ts < 60:
-        flash("It has been less than a minute since last update! Try again later")
+        flash("Too short time since last update! Try again later")
         return "nothing"
 
     status = backend.updateRoster()
