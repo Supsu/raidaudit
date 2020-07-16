@@ -102,11 +102,25 @@ class Backend:
 		return True
 		
 
-	def removePlayer(self, player):
+	def removePlayer(self, player: Dict[str, str]) -> bool:
 		"""
 		Remove player from roster
 		"""
-		pass
+		query = {
+			"name": player["name"]
+		}
+
+		collection = ""
+
+		if player["automated"]:
+			collection = "autoplayers"
+
+		else:
+			collection = "players"
+
+		res = self.db.remove(collection, query)
+
+		return res
 
 	def updateRoster(self):
 		"""
@@ -230,13 +244,6 @@ class Backend:
 		# TODO implement some kind of error handling and return False in
 		# case there is an error
 		return True
-
-
-	def updateDB(self):
-		"""
-		Update players in database from r.io and wcl
-		"""
-		pass
 
 	def login(self, usr: str, pwd: str):
 		"""

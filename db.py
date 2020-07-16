@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 import pymongo
 from dotenv import load_dotenv
@@ -85,6 +85,24 @@ class Database:
             else:
                 return ""
 
+
+    def remove(self, collection: str, query: Dict[str, str]) -> bool:
+
+        print("db.remove: query " + str(query))
+        print("db.remove: collection " + str(collection))
+
+        if collection == "autoplayers":
+            r = self.db.autoplayers.delete_one(query)
+            print("Deleted " + str(r.deleted_count) + " items")
+            return True
+
+        elif collection == "players":
+            r = self.db.players.delete_one(query)
+            print("Deleted " + str(r.deleted_count) + " items")
+            return True
+        else:
+            print("db.remove could not find collection")
+            return False
 
 if __name__ == "__main__":
     db = Database()

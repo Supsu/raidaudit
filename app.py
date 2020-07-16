@@ -235,6 +235,7 @@ def editPlayer():
     Gets characters name and role from form, distinguishes between automatically and manually added
     characters via form data and calls backend.editPlayerRole().
     """
+
     attr = request.form["name"].split(",")
     role = request.form["role"]
     automated = False
@@ -244,7 +245,19 @@ def editPlayer():
     if "automated-player" in attr:
         automated = True
 
-    backend.editPlayerRole(name, role, automated)
+    if request.form["submitButton"] == "add":
+        backend.editPlayerRole(name, role, automated)
+    elif request.form["submitButton"] == "delete":
+        player = {
+            "name": name,
+            "automated": automated
+        }
+        print("Deleting player: " + str(player))
+
+        r = backend.removePlayer(player)
+
+    else:
+        print("Edit bork")
         
 
     return redirect(url_for('admin'))
