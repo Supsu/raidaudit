@@ -315,7 +315,20 @@ class Backend:
 		return info
 		
 
-		
+	def getLootLog(self) -> List[str]:
+		"""
+		Fetches the loot log from exported RClootcouncil file
+		:return:
+			List containing the rows of BBCode for the equipment log
+		"""
+		export_filename = ""
+		loot_list = []
+		with open(export_filename, 'rb') as f:
+			lines = f.readlines()
+			for line in lines:
+				loot_list.append(line)
+
+		return loot_list
 
 
 if __name__ == "__main__":
