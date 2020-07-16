@@ -1,5 +1,9 @@
-from typing import Dict, List, Tuple
+import operator
+from dataclasses import dataclass
 
+from typing import Dict, List, Tuple, Union
+
+from datetime import datetime
 from db import Database
 from bnet import Bnet
 from rio import RIO
@@ -8,6 +12,35 @@ import json
 import time
 from dotenv import load_dotenv
 import os
+
+@dataclass
+class LootItemData:
+	item_name: str = "<insert name here>"
+	recipient: str = ""
+	recipient_class: str = ""
+	received_time: datetime = None
+	original_owner: str = ""
+	response: str = ""
+	boss_name: str = ""
+	instance_name: str = ""
+	item_id: int = 0
+	item_url: str = ""
+	realm_name: str = "Stormscale"
+
+	def __post_init__(self):
+		if self.realm_name in self.recipient:
+			self.recipient = self.recipient.replace("-" + self.realm_name, '')
+		if self.realm_name in self.original_owner:
+			self.original_owner = self.original_owner.replace("-" + self.realm_name, '')
+
+	def __str__(self):
+		if self.recipient != self.original_owner:
+			return f"{self.received_time.strftime('%d.%m %H:%M')} [{self.original_owner} >> {self.recipient}] " \
+					f"received [url={self.item_url}][{self.item_name}][/url] ({self.response}) from " \
+					f"{self.boss_name} in {self.instance_name}"
+		else:
+			return f"{self.received_time.strftime('%d.%m %H:%M')} [{self.recipient}] received [url={self.item_url}]" \
+					f"[{self.item_name}][/url] ({self.response}) from {self.boss_name} in {self.instance_name}"
 
 
 class Backend:
@@ -313,20 +346,55 @@ class Backend:
 			info["locale"] = "en-us"
 
 		return info
-		
 
-	def getLootLog(self) -> List[str]:
+	def getLootLog(self, loot_file: Union[str, List[str]], reversed: bool = True) -> List[LootItemData]:
 		"""
 		Fetches the loot log from exported RClootcouncil file
+		:param loot_filename:
+			Filename, list of filenames or directory containing .json files that contain the loot data
+		:param reversed:
+			If reversed, loot is sorted in time-ascending order
 		:return:
 			List containing the rows of BBCode for the equipment log
 		"""
-		export_filename = ""
+		# Pull data from file(s)
+		pulled_data = []
+		if isinstance(loot_file, list):
+			for filename in loot_file:
+				with open(filename, 'rb') as f:
+					pulled_data  += json.load(f)
+		elif os.path.isdir(loot_file):
+			files = [os.path.join(loot_file, f) for f in os.listdir(loot_file) if os.path.isfile(os.path.join(loot_file, f)) and '.json' in f]
+			for file in files:
+				with open(file, 'rb') as f:
+					pulled_data += json.load(f)
+		elif os.path.isfile(loot_file):
+			with open(loot_file, 'rb') as f:
+				pulled_data += json.load(f)
+
+		# parse data in file(s)
 		loot_list = []
-		with open(export_filename, 'rb') as f:
-			lines = f.readlines()
-			for line in lines:
-				loot_list.append(line)
+		for loot_data in pulled_data:
+			itemstring = loot_data['itemString']
+			vals = itemstring.split(':')
+			item_id = loot_data['itemID']
+			bonuses = vals[14:]
+			url = f"https://www.wowhead.com/item={item_id}&bonus={':'.join(bonuses)}"
+			date_string = loot_data['date'] + " " + loot_data['time']
+			date = datetime.strptime(date_string, '%d/%m/%y %H:%M:%S')
+			loot = LootItemData(recipient=loot_data['player'],
+								recipient_class=loot_data['class'],
+								received_time=date,
+								original_owner=loot_data['owner'],
+								response=loot_data['response'],
+								boss_name=loot_data['boss'],
+								instance_name=loot_data['instance'],
+								item_id=loot_data['itemID'],
+								item_url=url,
+								realm_name="Stormscale")
+			loot_list.append(loot)
+
+		loot_list.sort(key=operator.attrgetter('received_time'), reverse=True)
 
 		return loot_list
 
