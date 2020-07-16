@@ -1,12 +1,12 @@
 """
 Root module for Raid audit
 
-app.py handles flask routes, flask configuration, gathering data to display from backend module(s)
-and rendering html templates to response.
+app.py handles flask routes, flask configuration, gathering data to display
+from backend module(s) and rendering html templates to response.
 
-Routes are documented with their respective methods. Omitted from docstrings of single routes
-is that every route that corresponds to a rendered template also runs backend.getSideBar() to
-fill the left panel with data.
+Routes are documented with their respective methods. Omitted from docstrings
+of single routes is that every route that corresponds to a rendered
+template also runs backend.getSideBar() to fill the left panel with data.
 """
 from flask import Flask, session, redirect, url_for, request, render_template, flash
 from dotenv import load_dotenv
@@ -18,8 +18,12 @@ import os
 
 version = ""
 try:
-    version = str(subprocess.check_output(["git", "describe", "--all", "--always", "HEAD"]).strip())
-except:
+    version = str(subprocess.check_output(
+        ["git", "describe", "--all", "--always", "HEAD"]).strip()
+        )
+except OSError:
+    version = "N/A"
+except ValueError:
     version = "N/A"
 print(version)
 
@@ -30,7 +34,9 @@ app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 # subtitle for template
-sub = "{} | {}-{}".format(os.getenv("WOWGUILD"), os.getenv("WOWREALM"), os.getenv("WOWREGION"))
+sub = "{} | {}-{}".format(
+    os.getenv("WOWGUILD"), os.getenv("WOWREALM"), os.getenv("WOWREGION")
+    )
 
 backend = Backend()
 
@@ -39,8 +45,9 @@ backend = Backend()
 def index():
     """
     Responds to route '/'.
-    
-    Gets data required for index page from backend.getView(), backend.getLogs(), calculates time from last update of roster
+
+    Gets data required for index page from backend.getView(), 
+    backend.getLogs(), calculates time from last update of roster
     and returns flask.render_template('index.html') with required data. 
     """
 
@@ -116,7 +123,7 @@ def admin():
     else:
         flash("Please login!")
         return redirect(url_for('index'))
-    
+
 
 @app.route('/post', methods=["POST"])
 def postblog():
@@ -134,6 +141,7 @@ def postblog():
         flash("Failure!")
         
     return redirect(url_for('admin'))
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -178,6 +186,7 @@ def logout():
     session.pop('username')
     return redirect(url_for('index'))
 
+
 @app.route('/update')
 def updateIndex():
     """
@@ -201,20 +210,21 @@ def updateIndex():
     print("Roster update returned with " + str(status))
     return "nothing"
 
+
 @app.route('/addplayer', methods=['POST'])
 def addPlayer():
     """
     Responds to route '/addplayer' [POST ONLY]
 
-    Post only route used to add players to database from admin page. Gets players
-    name, role and class from form, then calls backend.addPlayer() to add player to DB.
+    Post only route used to add players to database from admin page. Gets
+    players name, role and class from form, then calls backend.addPlayer()
+    to add player to DB.
     """
 
     print("Received player addition request")
     playername = request.form["name"]
     playerclass = request.form["class"]
     playerrole = request.form["role"]
-
 
     print(playername)
     print(playerclass)
@@ -226,13 +236,15 @@ def addPlayer():
 
     return redirect(url_for('admin'))
 
+
 @app.route('/editplayer', methods=["POST"])
 def editPlayer():
     """
     Responds to  route '/editplayer' [POST ONLY]
 
-    Post only method/route that is used to edit existing player roles from admin page.
-    Gets characters name and role from form, distinguishes between automatically and manually added
+    Post only method/route that is used to edit existing player roles
+    from admin page. Gets characters name and role from form, distinguishes
+    between automatically and manually added
     characters via form data and calls backend.editPlayerRole().
     """
 
@@ -254,15 +266,12 @@ def editPlayer():
         }
         print("Deleting player: " + str(player))
 
-        r = backend.removePlayer(player)
+        backend.removePlayer(player)
 
     else:
         print("Edit bork")
-        
 
     return redirect(url_for('admin'))
-    
-
 
 
 if __name__ == "__main__":
