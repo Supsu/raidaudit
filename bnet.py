@@ -1,5 +1,5 @@
 import time
-from typing import Dict
+from typing import Dict, List, Union
 
 import requests
 from dotenv import load_dotenv
@@ -156,7 +156,7 @@ class Bnet:
 
         return req
 
-    def getItemName(self, itemid: int):
+    def getItemName(self, itemid: Union[int, List[int]]):
         """
         get item name from the Bnet endpoint
         :param itemid:
@@ -168,14 +168,30 @@ class Bnet:
         print(f"Getting item name for {itemid}...")
 
         self._token = self.getAccessToken()
-        reqUrl = f"{self._apiurl}data/wow/item/{itemid}"
-        print(f"bnet.getItemName {itemid}")
-        req = requests.get(reqUrl)
-        print(f"bnet.getItemName {req.status_code}")
-        req = req.json
-
-        return req['name']
-
+        if not isinstance(itemid, list):
+            reqUrl = f"{self._apiurl}data/wow/item/{itemid}?namespace={self._namespace}" \
+                     f"&locale={self._locale}&access_token={self._token}"
+            print(reqUrl)
+            print(f"bnet.getItemName {itemid}")
+            req = requests.get(reqUrl)
+            print(f"bnet.getItemName {req.status_code}")
+            if req.status_code != 200:
+                return ""
+            else:
+                req = req.json()
+                return req['name']
+        else:
+            item_list = []
+            for item in itemid:
+                reqUrl = f"{self._apiurl}data/wow/item/{item}?namespace={self._namespace}" \
+                         f"&locale={self._locale}&access_token={self._token}"
+                print(reqUrl)
+                print(f"bnet.getItemName {item}")
+                req = requests.get(reqUrl)
+                print(f"bnet.getItemName {req.status_code}")
+                if req.status_code == 200:
+                    item_list.append(req.json()['name'])
+            return item_list
 
 if __name__ == "__main__":
     print("Running as main, testing..")
