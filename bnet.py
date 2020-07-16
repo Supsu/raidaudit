@@ -156,6 +156,26 @@ class Bnet:
 
         return req
 
+    def getItemName(self, itemid: int):
+        """
+        get item name from the Bnet endpoint
+        :param itemid:
+            ID of the item to fetch
+        :return:
+            The name of the item
+        """
+
+        print(f"Getting item name for {itemid}...")
+
+        self._token = self.getAccessToken()
+        reqUrl = f"{self._apiurl}data/wow/item/{itemid}"
+        print(f"bnet.getItemName {itemid}")
+        req = requests.get(reqUrl)
+        print(f"bnet.getItemName {req.status_code}")
+        req = req.json
+
+        return req['name']
+
 
 if __name__ == "__main__":
     print("Running as main, testing..")
