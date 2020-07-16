@@ -1,11 +1,11 @@
-import json
 from dotenv import load_dotenv
 import os
 import requests
 import time
 
+
 class WCL:
-    
+
     _key = ""
     _region = ""
     _realm = ""
@@ -27,7 +27,6 @@ class WCL:
         url = url + self._region
         url = url + "?api_key=" + self._key
 
-
         r = requests.get(url)
 
         print(r.url)
@@ -37,8 +36,7 @@ class WCL:
         return r.text
 
     def getPlayerAvg(self, player: str):
-        #https://www.warcraftlogs.com:443/v1/rankings/character/supsu/stormscale/eu?metric=dps
-
+        # https://www.warcraftlogs.com:443/v1/rankings/character/supsu/stormscale/eu?metric=dps
 
         url = self._urlbase + "/rankings/character/"
         url = url + player + "/" + self._realm + "/" + self._region
@@ -46,28 +44,28 @@ class WCL:
 
         r = requests.get(url).json()
 
-        percentiles = { 3: [],
-                        4: [],
-                        5: [],
-                        "avgN": 0,
-                        "avgH": 0,
-                        "avgM": 0
+        percentiles = {
+            3: [],
+            4: [],
+            5: [],
+            "avgN": 0,
+            "avgH": 0,
+            "avgM": 0
                         }
-        count = 0
 
         if len(r) == 0:
             pass
         else:
             for rank in r:
-                
+
                 # get parses for N/H/M raids
-                if int( rank["difficulty"] ) == 3:
+                if int(rank["difficulty"]) == 3:
                     percentiles[3].append(float(rank["percentile"]))
 
-                elif int( rank["difficulty"] ) == 4:
+                elif int(rank["difficulty"]) == 4:
                     percentiles[4].append(float(rank["percentile"]))
 
-                elif int( rank["difficulty"] ) == 5:
+                elif int(rank["difficulty"]) == 5:
                     percentiles[5].append(float(rank["percentile"]))
 
                 else:
@@ -76,16 +74,22 @@ class WCL:
 
             # calculate averages
             if len(percentiles[3]) != 0:
-                percentiles["avgN"] = "{:.2f}".format(sum(percentiles[3]) / len(percentiles[3]))
+                percentiles["avgN"] = "{:.2f}".format(
+                    sum(percentiles[3]) / len(percentiles[3])
+                    )
 
             if len(percentiles[4]) != 0:
-                percentiles["avgH"] = "{:.2f}".format(sum(percentiles[4]) / len(percentiles[4]))
+                percentiles["avgH"] = "{:.2f}".format(
+                    sum(percentiles[4]) / len(percentiles[4])
+                    )
 
             if len(percentiles[5]) != 0:
-                percentiles["avgM"] = "{:.2f}".format(sum(percentiles[5]) / len(percentiles[5]))
-
+                percentiles["avgM"] = "{:.2f}".format(
+                    sum(percentiles[5]) / len(percentiles[5])
+                    )
 
         return percentiles
+
 
 if __name__ == "__main__":
     print("Testing WCL")
