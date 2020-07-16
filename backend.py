@@ -35,12 +35,12 @@ class LootItemData:
             self.original_owner = self.original_owner.replace("-" + self.realm_name, '')
 
     def __str__(self):
+
         if self.recipient != self.original_owner:
-            return f"{self.received_time.strftime('%d.%m %H:%M')} [{self.original_owner} >> {self.recipient}] " \
-                   f"received [url={self.item_url}][{self.item_name}][/url] ({self.response}) from " \
-                   f"{self.boss_name} in {self.instance_name}"
+            name = f"{self.original_owner} >> {self.recipient}"
         else:
-            return f"{self.received_time.strftime('%d.%m %H:%M')} [{self.recipient}] received [url={self.item_url}]" \
+            name = f"{self.recipient}"
+        return f"{self.received_time.strftime('%d.%m %H:%M')} [{name}] received [url={self.item_url}]" \
                    f"[{self.item_name}][/url] ({self.response}) from {self.boss_name} in {self.instance_name}"
 
 
@@ -399,7 +399,7 @@ class Backend:
                                 instance_name=loot_data['instance'],
                                 item_id=loot_data['itemID'],
                                 item_url=url,
-                                item_name=self.bnet.getItemName(item_id),
+                                # item_name=self.bnet.getItemName(item_id),
                                 realm_name="Stormscale")
             loot_list.append(loot)
 
