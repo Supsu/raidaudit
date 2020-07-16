@@ -399,7 +399,7 @@ class Backend:
                                 instance_name=loot_data['instance'],
                                 item_id=loot_data['itemID'],
                                 item_url=url,
-                                # item_name=self.bnet.getItemName(item_id),
+                                item_name=self.bnet.getItemName(item_id),
                                 realm_name="Stormscale")
             loot_list.append(loot)
 
