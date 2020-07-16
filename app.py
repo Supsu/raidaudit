@@ -30,7 +30,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 # subtitle for template
-sub = "Pulumafia (H) | Stormscale-EU"
+sub = "{} | {}-{}".format(os.getenv("WOWGUILD"), os.getenv("WOWREALM"), os.getenv("WOWREGION"))
 
 backend = Backend()
 
