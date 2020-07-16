@@ -13,6 +13,8 @@ from dotenv import load_dotenv
 from backend import Backend
 import time
 import subprocess
+import json
+import os
 
 version = ""
 try:
@@ -21,12 +23,14 @@ except:
     version = "N/A"
 print(version)
 
+load_dotenv()
+
 app = Flask(__name__)
 
-app.secret_key = 'uaiYSaYISUS41567YDabhY&WQT23YTEEiubz'
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 # subtitle for template
-sub = "Pulumafia (H) | Stormscale-EU"
+sub = "{} | {}-{}".format(os.getenv("WOWGUILD"), os.getenv("WOWREALM"), os.getenv("WOWREGION"))
 
 backend = Backend()
 
@@ -46,6 +50,9 @@ def index():
     logs = backend.getLogs()
     user = None
 
+    # get data to generate links in roster table
+    linkdata = json.dumps(backend.getLinkInfo())
+
     # get timestamp for last update
     updatetime = backend.getUpdateTimestamp()
     updated = "never"
@@ -61,7 +68,7 @@ def index():
 
     if 'username' in session:
         user = session['username']
-    return render_template('index.html', sub=sub, user=user, data=roster, logs=logs, updated=updated, sidebar=sidebar)
+    return render_template('index.html', sub=sub, user=user, data=roster, logs=logs, updated=updated, sidebar=sidebar, linkdata=linkdata)
 
 
 @app.route('/blog')
@@ -228,6 +235,7 @@ def editPlayer():
     Gets characters name and role from form, distinguishes between automatically and manually added
     characters via form data and calls backend.editPlayerRole().
     """
+
     attr = request.form["name"].split(",")
     role = request.form["role"]
     automated = False
@@ -237,7 +245,19 @@ def editPlayer():
     if "automated-player" in attr:
         automated = True
 
-    backend.editPlayerRole(name, role, automated)
+    if request.form["submitButton"] == "add":
+        backend.editPlayerRole(name, role, automated)
+    elif request.form["submitButton"] == "delete":
+        player = {
+            "name": name,
+            "automated": automated
+        }
+        print("Deleting player: " + str(player))
+
+        r = backend.removePlayer(player)
+
+    else:
+        print("Edit bork")
         
 
     return redirect(url_for('admin'))
