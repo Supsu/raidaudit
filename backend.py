@@ -403,7 +403,7 @@ class Backend:
                                 realm_name="Stormscale")
             loot_list.append(loot)
 
-        loot_list.sort(key=operator.attrgetter('received_time'), reverse=True)
+        loot_list.sort(key=operator.attrgetter('received_time'), reverse=reversed)
 
         return loot_list
 
