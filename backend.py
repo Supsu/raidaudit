@@ -9,6 +9,7 @@ from bnet import Bnet
 from rio import RIO
 from wcl import WCL
 import json
+import csv
 import time
 from dotenv import load_dotenv
 import os
@@ -41,7 +42,7 @@ class LootItemData:
         else:
             name = f"{self.recipient}"
         return f"{self.received_time.strftime('%d.%m %H:%M')} [{name}] received [url={self.item_url}]" \
-                   f"[{self.item_name}][/url] ({self.response}) from {self.boss_name} in {self.instance_name}"
+               f"{self.item_name}[/url] ({self.response}) from {self.boss_name} in {self.instance_name}"
 
 
 class Backend:
@@ -114,8 +115,8 @@ class Backend:
 
         for row in data:
             row["start"] = time.strftime(
-                '%Y-%m-%d', time.localtime(int(row["start"]/1000))
-                )
+                '%Y-%m-%d', time.localtime(int(row["start"] / 1000))
+            )
 
         return data
 
@@ -199,12 +200,12 @@ class Backend:
                 tmp["Weekly"] = int(
                     rioprofile["mythic_plus_weekly_highest_level_runs"][
                         0]["mythic_level"]
-                    )
+                )
 
             # in case of no data, should still return 0 as a score
             tmp["rio"] = float(
                 rioprofile["mythic_plus_scores_by_season"][0]["scores"]["all"]
-                )
+            )
 
             wclperf = self.wcl.getPlayerAvg(name)
 
@@ -254,11 +255,11 @@ class Backend:
                 tmp["Weekly"] = int(
                     rioprofile["mythic_plus_weekly_highest_level_runs"][0]
                     ["mythic_level"]
-                    )
+                )
 
             tmp["rio"] = float(
                 rioprofile["mythic_plus_scores_by_season"][0]["scores"]["all"]
-                )
+            )
 
             wclperf = self.wcl.getPlayerAvg(name)
 
@@ -278,7 +279,7 @@ class Backend:
         print("Setting update timestamp to " + str(int(time.time())))
         response = self.db.db.settings.update_one(
             {}, {"$set": {"timestamp": int(time.time())}}, upsert=False
-            )
+        )
         print("Modified " + str(response.modified_count) + " entries")
 
         # TODO implement some kind of error handling and return False in
@@ -366,19 +367,26 @@ class Backend:
         """
         # Pull data from file(s)
         pulled_data = []
+        indexes = []
         if isinstance(loot_file, list):
             for filename in loot_file:
-                with open(filename, 'rb') as f:
-                    pulled_data += json.load(f)
+                with open(filename) as f:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        pulled_data.append(dict(row))
         elif os.path.isdir(loot_file):
             files = [os.path.join(loot_file, f) for f in os.listdir(loot_file) if
                      os.path.isfile(os.path.join(loot_file, f)) and '.json' in f]
             for file in files:
-                with open(file, 'rb') as f:
-                    pulled_data += json.load(f)
+                with open(file) as f:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        pulled_data.append(dict(row))
         elif os.path.isfile(loot_file):
-            with open(loot_file, 'rb') as f:
-                pulled_data += json.load(f)
+            with open(loot_file) as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    pulled_data.append(dict(row))
 
         # parse data in file(s)
         loot_list = []
@@ -398,8 +406,8 @@ class Backend:
                                 boss_name=loot_data['boss'],
                                 instance_name=loot_data['instance'],
                                 item_id=loot_data['itemID'],
+                                item_name=loot_data['item'],
                                 item_url=url,
-                                item_name=self.bnet.getItemName(item_id),
                                 realm_name="Stormscale")
             loot_list.append(loot)
 
