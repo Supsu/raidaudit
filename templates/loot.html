@@ -6,10 +6,21 @@
     <div class="card-body">
   
       <h5 class="card-title">Loot history</h5>
-      <table class="table table-striped table-dark" id="loothistory">
+      <table class="table table-striped table-dark" id="loothistory" onload="stylelh()">
+        <thead>
+            <th></th>
+        </thead>
         {% for row in data %}
           <tr>
-            <td>{{row}}</td>
+            <td class="lhtime"><span class="badge badge-secondary">{{row.received_time}}</span></td>
+            <td class="lhname" data-class="{{ row.recipient_class }}">{{ row.recipient }} 
+                {% if row.recipient != row.original_owner %}
+                <span class="badge badge-info">{{ row.original_owner }}</span>
+                {% endif %}
+            </td>
+            <td class="lhitem"><a href="{{row.item_url}}">{{row.item_name}}</a></td>
+            <td class="lhresponse"><span class="badge badge-warning">{{ row.response }}</span></td>
+            <td class="lhboss"><span class="badge badge-danger" title="{{ row.instance_name }}">{{ row.boss_name }}</span></td> 
           </tr>
         {% endfor %}
   

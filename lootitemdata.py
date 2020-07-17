@@ -33,8 +33,10 @@ class LootItemData:
         String representation of the loot item for easier handling.
         """
         if self.recipient != self.original_owner:
-            name = f"{self.original_owner} >> {self.recipient}"
+            name = f"{self.original_owner} <br>-> {self.recipient}"
         else:
             name = f"{self.recipient}"
-        return f"{self.received_time.strftime('%d.%m %H:%M')} [{name}] received [url={self.item_url}]" \
-               f"{self.item_name}[/url] ({self.response}) from {self.boss_name} in {self.instance_name}"
+        return f"{self.received_time.strftime('%d.%m %H:%M')}: " +\
+                f"{name} received {self.item_url} / " +\
+                f"{self.item_name} with response {self.response} " +\
+                f"from {self.boss_name} in {self.instance_name}"

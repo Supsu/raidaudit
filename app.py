@@ -304,8 +304,7 @@ def lootpage():
 
     data = []
     for item in dbdata:
-        data.append(item.__str__())
-        print("Appended " + item.__str__())
+        data.append(item)
 
 
     if 'username' in session:
