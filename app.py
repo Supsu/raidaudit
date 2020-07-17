@@ -17,6 +17,7 @@ import subprocess
 import json
 import os
 
+# TODO change versioning to depend on something other than git head
 version = ""
 try:
     version = str(subprocess.check_output(
@@ -25,6 +26,8 @@ try:
 except OSError:
     version = "N/A"
 except ValueError:
+    version = "N/A"
+except subprocess.CalledProcessError:
     version = "N/A"
 print(version)
 
@@ -292,6 +295,27 @@ def editPlayer():
         print("Edit bork")
 
     return redirect(url_for('admin'))
+
+
+@app.route('/loot')
+def lootpage():
+    """Acts as endpoint for /loot
+    """
+    sidebar = backend.getSideBar()
+    user = ""
+    dbdata = backend.getLoots()
+
+    data = []
+    for item in dbdata:
+        data.append(item)
+
+
+    if 'username' in session:
+            user = session['username']
+
+    return render_template(
+        'loot.html', sub=sub, user=user, sidebar=sidebar, data=data
+        )
 
 
 if __name__ == "__main__":
