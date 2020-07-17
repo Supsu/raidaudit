@@ -376,7 +376,7 @@ class Backend:
                         pulled_data.append(dict(row))
         elif os.path.isdir(loot_file):
             files = [os.path.join(loot_file, f) for f in os.listdir(loot_file) if
-                     os.path.isfile(os.path.join(loot_file, f)) and '.json' in f]
+                     os.path.isfile(os.path.join(loot_file, f)) and '.csv' in f]
             for file in files:
                 with open(file) as f:
                     reader = csv.DictReader(f)
