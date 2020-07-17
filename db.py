@@ -1,9 +1,11 @@
-from typing import Dict
+from typing import Dict, List
 
 import pymongo
 from dotenv import load_dotenv
 import os
 import time
+from dataclasses import asdict
+from lootitemdata import LootItemData
 
 
 class Database:
@@ -138,6 +140,36 @@ class Database:
         else:
             print("db.remove could not find collection")
             return False
+
+    def getLoot(self):
+        """Gets Loot entries from DB
+
+        Get all entries in collection "loot" in database.
+
+        Returns:
+            res: pymongo cursor to query response
+        """
+
+        res = self.db.loot.find()
+        return res
+
+    def addLoot(self, newloot: List[LootItemData]) -> bool:
+        """Adds new loot data to DB
+
+        A method to insert data parsed to BBCode via backend.getLootLog()
+        to database.
+
+        Args:
+            newloot: 
+
+        Returns:
+            success: bool
+        """
+
+        for entry in newloot:
+            self.db.loot.insert_one(asdict(entry))
+
+        return True
 
 
 if __name__ == "__main__":

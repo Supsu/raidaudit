@@ -14,43 +14,7 @@ import time
 from dotenv import load_dotenv
 import os
 
-
-@dataclass
-class LootItemData:
-    """
-    Contains data about a loot item in an RClootcouncil session.
-    """
-    item_name: str = "<insert name here>"
-    recipient: str = ""
-    recipient_class: str = ""
-    received_time: datetime = None
-    original_owner: str = ""
-    response: str = ""
-    boss_name: str = ""
-    instance_name: str = ""
-    item_id: int = 0
-    item_url: str = ""
-    realm_name: str = "Stormscale"
-
-    def __post_init__(self):
-        """
-        Remove realm names from characters from the same realm but leave them for PUGs.
-        """
-        if self.realm_name in self.recipient:
-            self.recipient = self.recipient.replace("-" + self.realm_name, '')
-        if self.realm_name in self.original_owner:
-            self.original_owner = self.original_owner.replace("-" + self.realm_name, '')
-
-    def __str__(self):
-        """
-        String representation of the loot item for easier handling.
-        """
-        if self.recipient != self.original_owner:
-            name = f"{self.original_owner} >> {self.recipient}"
-        else:
-            name = f"{self.recipient}"
-        return f"{self.received_time.strftime('%d.%m %H:%M')} [{name}] received [url={self.item_url}]" \
-               f"{self.item_name}[/url] ({self.response}) from {self.boss_name} in {self.instance_name}"
+from lootitemdata import LootItemData
 
 
 class Backend:
@@ -427,7 +391,24 @@ class Backend:
 
         return loot_list
 
+    def getLoots(self):
+        """Get loot log data from DB
+
+        Gets the loot log data through DB.
+
+        Returns:
+            entrylist: List containing database entries
+        """
+
+        entrylist = []
+
+        loot = self.db.getLoot()
+        for entry in loot:
+            entrylist.append(entry)
+
+        print(entrylist)
+        return entrylist
 
 if __name__ == "__main__":
     back = Backend()
-    print(back.getUpdateTimestamp())
+    back.getLoots()
