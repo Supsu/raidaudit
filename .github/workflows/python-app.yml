@@ -67,7 +67,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest --capture=sys-tee
+        pytest --capture=tee-sys
       env:
         BNETID: "12345678901234567890123456789012" 
         BNETKEY: "12345678901234567890123456789012"
