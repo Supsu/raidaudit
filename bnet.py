@@ -158,11 +158,13 @@ class Bnet:
 
     def getItemName(self, itemid: Union[int, List[int]]):
         """
-        get item name from the Bnet endpoint
-        :param itemid:
-            ID of the item to fetch
-        :return:
-            The name of the item
+        Get item name from the bnet endpoint
+
+        Args:
+            itemid (int, :obj: `list` of int): item ID or a list of item IDs to query from the endpoint.
+
+        Returns:
+            Item name or a list of item names corresponding to the arg item IDs.
         """
 
         print(f"Getting item name for {itemid}...")
