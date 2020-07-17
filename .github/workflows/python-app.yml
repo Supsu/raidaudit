@@ -15,7 +15,7 @@ env:
   WOWGUILD: "pulumafia"
   WOWLOCALE: "en_US"
   WOWNAMESPACE: "profile-eu"
-  MONGOURL: "http://localhost"
+  MONGOURL: "mongodb+srv://localhost"
   MONGOPORT: 27107
   MONGOUSER: "asd"
   MONGOPWD: "fgh"
