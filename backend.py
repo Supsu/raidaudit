@@ -1,17 +1,59 @@
-from typing import Dict, List, Tuple
+import operator
+from dataclasses import dataclass
 
+from typing import Dict, List, Tuple, Union
+
+from datetime import datetime
 from db import Database
 from bnet import Bnet
 from rio import RIO
 from wcl import WCL
 import json
+import csv
 import time
 from dotenv import load_dotenv
 import os
 
 
-class Backend:
+@dataclass
+class LootItemData:
+    """
+    Contains data about a loot item in an RClootcouncil session.
+    """
+    item_name: str = "<insert name here>"
+    recipient: str = ""
+    recipient_class: str = ""
+    received_time: datetime = None
+    original_owner: str = ""
+    response: str = ""
+    boss_name: str = ""
+    instance_name: str = ""
+    item_id: int = 0
+    item_url: str = ""
+    realm_name: str = "Stormscale"
 
+    def __post_init__(self):
+        """
+        Remove realm names from characters from the same realm but leave them for PUGs.
+        """
+        if self.realm_name in self.recipient:
+            self.recipient = self.recipient.replace("-" + self.realm_name, '')
+        if self.realm_name in self.original_owner:
+            self.original_owner = self.original_owner.replace("-" + self.realm_name, '')
+
+    def __str__(self):
+        """
+        String representation of the loot item for easier handling.
+        """
+        if self.recipient != self.original_owner:
+            name = f"{self.original_owner} >> {self.recipient}"
+        else:
+            name = f"{self.recipient}"
+        return f"{self.received_time.strftime('%d.%m %H:%M')} [{name}] received [url={self.item_url}]" \
+               f"{self.item_name}[/url] ({self.response}) from {self.boss_name} in {self.instance_name}"
+
+
+class Backend:
     db = ""
     bnet = ""
     rio = ""
@@ -81,8 +123,8 @@ class Backend:
 
         for row in data:
             row["start"] = time.strftime(
-                '%Y-%m-%d', time.localtime(int(row["start"]/1000))
-                )
+                '%Y-%m-%d', time.localtime(int(row["start"] / 1000))
+            )
 
         return data
 
@@ -166,12 +208,12 @@ class Backend:
                 tmp["Weekly"] = int(
                     rioprofile["mythic_plus_weekly_highest_level_runs"][
                         0]["mythic_level"]
-                    )
+                )
 
             # in case of no data, should still return 0 as a score
             tmp["rio"] = float(
                 rioprofile["mythic_plus_scores_by_season"][0]["scores"]["all"]
-                )
+            )
 
             wclperf = self.wcl.getPlayerAvg(name)
 
@@ -221,11 +263,11 @@ class Backend:
                 tmp["Weekly"] = int(
                     rioprofile["mythic_plus_weekly_highest_level_runs"][0]
                     ["mythic_level"]
-                    )
+                )
 
             tmp["rio"] = float(
                 rioprofile["mythic_plus_scores_by_season"][0]["scores"]["all"]
-                )
+            )
 
             wclperf = self.wcl.getPlayerAvg(name)
 
@@ -245,7 +287,7 @@ class Backend:
         print("Setting update timestamp to " + str(int(time.time())))
         response = self.db.db.settings.update_one(
             {}, {"$set": {"timestamp": int(time.time())}}, upsert=False
-            )
+        )
         print("Modified " + str(response.modified_count) + " entries")
 
         # TODO implement some kind of error handling and return False in
@@ -320,6 +362,70 @@ class Backend:
             info["locale"] = "en-us"
 
         return info
+
+    def getLootLog(self, loot_file: Union[str, List[str]], time_descending: bool = False) -> List[LootItemData]:
+        """
+        Fetches RC loot council loot data from .csv file(s) and returns a list of LootItemData objects in time-sorted
+        order from latest to oldest.
+
+        Args:
+            loot_file (:obj: `str`, :obj: `list` of :obj: `str`): Contains the filename, directory name or
+                list of filenames containing the data
+            time_descending (bool, optional): Set to true to sort from oldest to newest. Otherwise sorts from
+                newest to oldest.
+
+        Returns:
+            List: :obj: `LootItemData` objects sorted by time.
+        """
+        # Pull data from file(s)
+        pulled_data = []
+        indexes = []
+        if isinstance(loot_file, list):
+            for filename in loot_file:
+                with open(filename) as f:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        pulled_data.append(dict(row))
+        elif os.path.isdir(loot_file):
+            files = [os.path.join(loot_file, f) for f in os.listdir(loot_file) if
+                     os.path.isfile(os.path.join(loot_file, f)) and '.csv' in f]
+            for file in files:
+                with open(file) as f:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        pulled_data.append(dict(row))
+        elif os.path.isfile(loot_file):
+            with open(loot_file) as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    pulled_data.append(dict(row))
+
+        # parse data in file(s)
+        loot_list = []
+        for loot_data in pulled_data:
+            itemstring = loot_data['itemString']
+            vals = itemstring.split(':')
+            item_id = loot_data['itemID']
+            bonuses = vals[14:]
+            url = f"https://www.wowhead.com/item={item_id}&bonus={':'.join(bonuses)}"
+            date_string = loot_data['date'] + " " + loot_data['time']
+            date = datetime.strptime(date_string, '%d/%m/%y %H:%M:%S')
+            loot = LootItemData(recipient=loot_data['player'],
+                                recipient_class=loot_data['class'],
+                                received_time=date,
+                                original_owner=loot_data['owner'],
+                                response=loot_data['response'],
+                                boss_name=loot_data['boss'],
+                                instance_name=loot_data['instance'],
+                                item_id=loot_data['itemID'],
+                                item_name=loot_data['item'],
+                                item_url=url,
+                                realm_name="Stormscale")
+            loot_list.append(loot)
+
+        loot_list.sort(key=operator.attrgetter('received_time'), reverse=not time_descending)
+
+        return loot_list
 
 
 if __name__ == "__main__":
