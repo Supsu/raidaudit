@@ -68,3 +68,18 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+      env:
+        BNETID: "12345678901234567890123456789012" 
+        BNETKEY: "12345678901234567890123456789012"
+        WCLKEY: "12345678901234567890123456789012"
+        WOWREGION: "eu"
+        WOWREALM: "stormscale"
+        WOWGUILD: "pulumafia"
+        WOWLOCALE: "en_US"
+        WOWNAMESPACE: "profile-eu"
+        MONGOURL: "localhost"
+        MONGOPORT: 27107
+        MONGOUSER: "asd"
+        MONGOPWD: "fgh"
+        RAIDERRANK: 3
+        FLASK_SECRET_KEY: "ahjdkjhagsdgaud786876dajikhakbs6t"
