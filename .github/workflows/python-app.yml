@@ -6,6 +6,8 @@ name: Python application
 on: [push, pull_request]
 
 # env has to be set, since git repo doesn't contain legit .env file
+# echo "::set-env name=action_state::yellow"
+
 env:
   BNETID: "12345678901234567890123456789012" 
   BNETKEY: "12345678901234567890123456789012"
@@ -34,6 +36,24 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
+    - name: Setup ENV
+      run: |
+        #echo "::set-env name=action_state::yellow"
+        echo "::set-env name=BNETID::12345678901234567890123456789012"
+        echo "::set-env name=BNETKEY::12345678901234567890123456789012"
+        echo "::set-env name=WCLKEY::12345678901234567890123456789012"
+        echo "::set-env name=WOWREGION::eu"
+        echo "::set-env name=WOWREALM::stormscale"
+        echo "::set-env name=WOWGUILD::pulumafia"
+        echo "::set-env name=WOWLOCALE::en_US"
+        echo "::set-env name=WOWNAMESPACE::profile-eu"
+        echo "::set-env name=MONGOURL::localhost"
+        echo "::set-env name=MONGOPORT::27107"
+        echo "::set-env name=MONGOUSER::asd"
+        echo "::set-env name=MONGOPWD::fgh"
+        echo "::set-env name=RAIDERRANK::3"
+        echo "::set-env name=FLASK_SECRET_KEY::ahjdkjhagsdgaud786876dajikhakbs6t"
+        
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
