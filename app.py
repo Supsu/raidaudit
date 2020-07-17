@@ -17,6 +17,7 @@ import subprocess
 import json
 import os
 
+# TODO change versioning to depend on something other than git head
 version = ""
 try:
     version = str(subprocess.check_output(
@@ -25,6 +26,8 @@ try:
 except OSError:
     version = "N/A"
 except ValueError:
+    version = "N/A"
+except subprocess.CalledProcessError:
     version = "N/A"
 print(version)
 
