@@ -294,5 +294,27 @@ def editPlayer():
     return redirect(url_for('admin'))
 
 
+@app.route('/loot')
+def lootpage():
+    """Acts as endpoint for /loot
+    """
+    sidebar = backend.getSideBar()
+    user = ""
+    dbdata = backend.getLoots()
+
+    data = []
+    for item in dbdata:
+        data.append(item.__str__())
+        print("Appended " + item.__str__())
+
+
+    if 'username' in session:
+            user = session['username']
+
+    return render_template(
+        'loot.html', sub=sub, user=user, sidebar=sidebar, data=data
+        )
+
+
 if __name__ == "__main__":
     app.run(debug=True)

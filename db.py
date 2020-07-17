@@ -150,7 +150,7 @@ class Database:
             res: pymongo cursor to query response
         """
 
-        res = self.db.loot.find()
+        res = self.db.loot.find(projection={"_id": False})
         return res
 
     def addLoot(self, newloot: List[LootItemData]) -> bool:

@@ -1,0 +1,1 @@
+All .csv files from this folder will be deleted when backend.addLoots() is triggered

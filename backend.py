@@ -16,6 +16,8 @@ import os
 
 from lootitemdata import LootItemData
 
+import glob
+
 
 class Backend:
     db = ""
@@ -392,7 +394,7 @@ class Backend:
         return loot_list
 
     def getLoots(self):
-        """Get loot log data from DB
+        """Gets loot log data from DB
 
         Gets the loot log data through DB.
 
@@ -404,11 +406,35 @@ class Backend:
 
         loot = self.db.getLoot()
         for entry in loot:
-            entrylist.append(entry)
+            entrylist.append(LootItemData(**entry))
 
-        print(entrylist)
+        for item in entrylist:
+            print(item)
         return entrylist
+
+    def addLoots(self) -> bool:
+        """Adds loot data from .cvs files to database
+
+        Returns:
+            bool: True if no exceptions were raised
+        """
+        try:
+            lootlist = self.getLootLog("lootdata")
+            self.db.addLoot(lootlist)
+        except:
+            return False
+
+        try:
+            rmFiles = glob.glob("./lootdata/*.csv")
+            for file in rmFiles:
+                os.remove(file)
+        except OSError:
+            return False
+
+        return True
+
 
 if __name__ == "__main__":
     back = Backend()
+    back.addLoots()
     back.getLoots()
