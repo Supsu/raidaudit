@@ -5,26 +5,6 @@ name: Python application
 
 on: [push, pull_request]
 
-# env has to be set, since git repo doesn't contain legit .env file
-# echo "::set-env name=action_state::yellow"
-
-env:
-  BNETID: "12345678901234567890123456789012" 
-  BNETKEY: "12345678901234567890123456789012"
-  WCLKEY: "12345678901234567890123456789012"
-  WOWREGION: "eu"
-  WOWREALM: "stormscale"
-  WOWGUILD: "pulumafia"
-  WOWLOCALE: "en_US"
-  WOWNAMESPACE: "profile-eu"
-  MONGOURL: "localhost"
-  MONGOPORT: 27107
-  MONGOUSER: "asd"
-  MONGOPWD: "fgh"
-  RAIDERRANK: 3
-  FLASK_SECRET_KEY: "ahjdkjhagsdgaud786876dajikhakbs6t"
-  
-
 jobs:
   build:
 
@@ -40,7 +20,7 @@ jobs:
       run: |
         #echo "::set-env name=action_state::yellow"
         echo "::set-env name=BNETID::12345678901234567890123456789012"
-        echo "::set-env name=BNETKEY::12345678901234567890123456789012"
+        echo "::set-env name=BNETSECRET::12345678901234567890123456789012"
         echo "::set-env name=WCLKEY::12345678901234567890123456789012"
         echo "::set-env name=WOWREGION::eu"
         echo "::set-env name=WOWREALM::stormscale"
@@ -73,7 +53,7 @@ jobs:
         pytest --capture=tee-sys
       env:
         BNETID: "12345678901234567890123456789012" 
-        BNETKEY: "12345678901234567890123456789012"
+        BNETSECRET: "12345678901234567890123456789012"
         WCLKEY: "12345678901234567890123456789012"
         WOWREGION: "eu"
         WOWREALM: "stormscale"
