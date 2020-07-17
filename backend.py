@@ -17,6 +17,9 @@ import os
 
 @dataclass
 class LootItemData:
+    """
+    Contains data about a loot item in an RClootcouncil session.
+    """
     item_name: str = "<insert name here>"
     recipient: str = ""
     recipient_class: str = ""
@@ -30,13 +33,18 @@ class LootItemData:
     realm_name: str = "Stormscale"
 
     def __post_init__(self):
+        """
+        Remove realm names from characters from the same realm but leave them for PUGs.
+        """
         if self.realm_name in self.recipient:
             self.recipient = self.recipient.replace("-" + self.realm_name, '')
         if self.realm_name in self.original_owner:
             self.original_owner = self.original_owner.replace("-" + self.realm_name, '')
 
     def __str__(self):
-
+        """
+        String representation of the loot item for easier handling.
+        """
         if self.recipient != self.original_owner:
             name = f"{self.original_owner} >> {self.recipient}"
         else:
@@ -355,15 +363,19 @@ class Backend:
 
         return info
 
-    def getLootLog(self, loot_file: Union[str, List[str]], reversed: bool = True) -> List[LootItemData]:
+    def getLootLog(self, loot_file: Union[str, List[str]], time_descending: bool = False) -> List[LootItemData]:
         """
-        Fetches the loot log from exported RClootcouncil file
-        :param loot_file:
-            Filename, list of filenames or directory containing .json files that contain the loot data
-        :param reversed:
-            If reversed, loot is sorted in time-ascending order
-        :return:
-            List containing the rows of BBCode for the equipment log
+        Fetches RC loot council loot data from .csv file(s) and returns a list of LootItemData objects in time-sorted
+        order from latest to oldest.
+
+        Args:
+            loot_file (:obj: `str`, :obj: `list` of :obj: `str`): Contains the filename, directory name or
+                list of filenames containing the data
+            time_descending (bool, optional): Set to true to sort from oldest to newest. Otherwise sorts from
+                newest to oldest.
+
+        Returns:
+            List: :obj: `LootItemData` objects sorted by time.
         """
         # Pull data from file(s)
         pulled_data = []
@@ -411,7 +423,7 @@ class Backend:
                                 realm_name="Stormscale")
             loot_list.append(loot)
 
-        loot_list.sort(key=operator.attrgetter('received_time'), reverse=reversed)
+        loot_list.sort(key=operator.attrgetter('received_time'), reverse=not time_descending)
 
         return loot_list
 
