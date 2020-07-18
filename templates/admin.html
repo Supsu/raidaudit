@@ -17,7 +17,7 @@
 </script>
 <script src="{{ url_for('static', filename='scripts/admin.js') }}"></script>
 
-<a class="btn btn-success" data-toggle="collapse" href="#postblogscr" role="button" aria-expanded="false" aria-controls="collapseExample">
+<a class="btn btn-success" data-toggle="collapse" href="#postblogscr" role="button" aria-expanded="false">
     Post a blog post
   </a>
 <div class="collapse" id="postblogscr">
@@ -40,7 +40,7 @@
 
 </div>
 
-<a class="btn btn-success" data-toggle="collapse" href="#addcharacterscr" role="button" aria-expanded="false" aria-controls="collapseExample">
+<a class="btn btn-success" data-toggle="collapse" href="#addcharacterscr" role="button" aria-expanded="false">
     Add character
   </a>
 
@@ -87,7 +87,7 @@
 </div></div>
   </div>
 
-<a class="btn btn-success" data-toggle="collapse" href="#editcharacterscr" role="button" aria-expanded="false" aria-controls="collapseExample">
+<a class="btn btn-success" data-toggle="collapse" href="#editcharacterscr" role="button" aria-expanded="false">
     Edit character
 </a>
 <div class="collapse" id="editcharacterscr">
@@ -122,5 +122,25 @@
   </div>
 </div></div>
  </div>
+
+
+
+ <a class="btn btn-success" data-toggle="collapse" href="#addlootdata" role="button" aria-expanded="false">
+    Add a loot log
+  </a>
+<div class="collapse" id="addlootdata">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Add a loot log</h5>
+            <form action="addloot" method="POST">
+                <div class="form-group">
+                    <label for="ll-data">Data:</label>
+                    <textarea class="form-control" rows="10" id="ll-data" name="ll-data"></textarea>
+                </div>
+                <button id="postlootdata" class="btn btn-primary" type="submit">Post</button>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

@@ -18,6 +18,8 @@ def test_env_available():
     """
     load_dotenv()
 
+    print(os.environ)
+
     assert os.getenv("BNETID") is not None,\
         "Env doesn't have value for BNETID"
     assert os.getenv("BNETSECRET") is not None,\

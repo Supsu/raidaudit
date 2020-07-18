@@ -345,7 +345,6 @@ class Backend:
         """
         # Pull data from file(s)
         pulled_data = []
-        indexes = []
         if isinstance(loot_file, list):
             for filename in loot_file:
                 with open(filename) as f:

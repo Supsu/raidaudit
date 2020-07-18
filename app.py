@@ -317,6 +317,24 @@ def lootpage():
         'loot.html', sub=sub, user=user, sidebar=sidebar, data=data
         )
 
+@app.route('/addloot', methods=['POST'])
+def addloot():
+    """Endpoint for adding loot log to database.
+    """
+
+    data = request.form["ll-data"]
+    print(data)
+
+    filename = "./lootdata/" + str(int(time.time())) + ".csv"
+
+    with open(filename, "w") as f:
+        bcount = f.write(data)
+        print("Wrote " + str(bcount) + "bytes to " + filename)
+
+    backend.addLoots()
+
+    return redirect(url_for('admin'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
