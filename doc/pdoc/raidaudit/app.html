@@ -23,11 +23,11 @@
 </header>
 <section id="section-intro">
 <p>Root module for Raid audit</p>
-<p>app.py handles flask routes, flask configuration, gathering data to display from backend module(s)
-and rendering html templates to response.</p>
-<p>Routes are documented with their respective methods. Omitted from docstrings of single routes
-is that every route that corresponds to a rendered template also runs backend.getSideBar() to
-fill the left panel with data.</p>
+<p>app.py handles flask routes, flask configuration, gathering data to display
+from backend module(s) and rendering html templates to response.</p>
+<p>Routes are documented with their respective methods. Omitted from docstrings
+of single routes is that every route that corresponds to a rendered
+template also runs backend.getSideBar() to fill the left panel with data.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -35,32 +35,46 @@ fill the left panel with data.</p>
 <pre><code class="python">&#34;&#34;&#34;
 Root module for Raid audit
 
-app.py handles flask routes, flask configuration, gathering data to display from backend module(s)
-and rendering html templates to response.
+app.py handles flask routes, flask configuration, gathering data to display
+from backend module(s) and rendering html templates to response.
 
-Routes are documented with their respective methods. Omitted from docstrings of single routes
-is that every route that corresponds to a rendered template also runs backend.getSideBar() to
-fill the left panel with data.
+Routes are documented with their respective methods. Omitted from docstrings
+of single routes is that every route that corresponds to a rendered
+template also runs backend.getSideBar() to fill the left panel with data.
 &#34;&#34;&#34;
-from flask import Flask, session, redirect, url_for, request, render_template, flash
+from flask import Flask, session, redirect, url_for, request, render_template
+from flask import flash
 from dotenv import load_dotenv
 from backend import Backend
 import time
 import subprocess
+import json
+import os
 
+# TODO change versioning to depend on something other than git head
 version = &#34;&#34;
 try:
-    version = str(subprocess.check_output([&#34;git&#34;, &#34;describe&#34;, &#34;--all&#34;, &#34;--always&#34;, &#34;HEAD&#34;]).strip())
-except:
+    version = str(subprocess.check_output(
+        [&#34;git&#34;, &#34;describe&#34;, &#34;--all&#34;, &#34;--always&#34;, &#34;HEAD&#34;]).strip()
+        )
+except OSError:
+    version = &#34;N/A&#34;
+except ValueError:
+    version = &#34;N/A&#34;
+except subprocess.CalledProcessError:
     version = &#34;N/A&#34;
 print(version)
 
+load_dotenv()
+
 app = Flask(__name__)
 
-app.secret_key = &#39;uaiYSaYISUS41567YDabhY&amp;WQT23YTEEiubz&#39;
+app.secret_key = os.getenv(&#34;FLASK_SECRET_KEY&#34;)
 
 # subtitle for template
-sub = &#34;Pulumafia (H) | Stormscale-EU&#34;
+sub = &#34;{} | {}-{}&#34;.format(
+    os.getenv(&#34;WOWGUILD&#34;), os.getenv(&#34;WOWREALM&#34;), os.getenv(&#34;WOWREGION&#34;)
+    )
 
 backend = Backend()
 
@@ -69,9 +83,10 @@ backend = Backend()
 def index():
     &#34;&#34;&#34;
     Responds to route &#39;/&#39;.
-    
-    Gets data required for index page from backend.getView(), backend.getLogs(), calculates time from last update of roster
-    and returns flask.render_template(&#39;index.html&#39;) with required data. 
+
+    Gets data required for index page from backend.getView(),
+    backend.getLogs(), calculates time from last update of roster
+    and returns flask.render_template(&#39;index.html&#39;) with required data.
     &#34;&#34;&#34;
 
     sidebar = backend.getSideBar()
@@ -79,6 +94,9 @@ def index():
     roster = backend.getView()
     logs = backend.getLogs()
     user = None
+
+    # get data to generate links in roster table
+    linkdata = json.dumps(backend.getLinkInfo())
 
     # get timestamp for last update
     updatetime = backend.getUpdateTimestamp()
@@ -91,11 +109,17 @@ def index():
     else:
         timenow = time.time()
         delta = timenow-updatetime
-        updated = time.strftime(&#34;%d days, %H hours, %M minutes, %S seconds ago&#34;, time.gmtime(delta))
+        updated = time.strftime(
+            &#34;%d days, %H hours, %M minutes, %S seconds ago&#34;,
+            time.gmtime(delta)
+            )
 
     if &#39;username&#39; in session:
         user = session[&#39;username&#39;]
-    return render_template(&#39;index.html&#39;, sub=sub, user=user, data=roster, logs=logs, updated=updated, sidebar=sidebar)
+    return render_template(
+        &#39;index.html&#39;, sub=sub, user=user, data=roster, logs=logs,
+        updated=updated, sidebar=sidebar, linkdata=linkdata
+        )
 
 
 @app.route(&#39;/blog&#39;)
@@ -103,10 +127,10 @@ def index():
 def blog(id=None):
     &#34;&#34;&#34;
     Responds to routes &#39;/blog&#39; and &#39;/blog/id&#39;.
-    
+
     If no ID is given returns blog posts
-    gotten from backeng.getBlog() and with ID backend.getSingleBlog(id). Returns 
-    flask.render_template(&#39;blog.html&#39;) with required data.
+    gotten from backeng.getBlog() and with ID backend.getSingleBlog(id).
+    Returns flask.render_template(&#39;blog.html&#39;) with required data.
     &#34;&#34;&#34;
 
     sidebar = backend.getSideBar()
@@ -115,21 +139,28 @@ def blog(id=None):
         user = None
         if &#39;username&#39; in session:
             user = session[&#39;username&#39;]
-        return render_template(&#39;blog.html&#39;, sub=sub,user=user, posts=posts, single=False, sidebar=sidebar)
+        return render_template(
+            &#39;blog.html&#39;, sub=sub, user=user, posts=posts,
+            single=False, sidebar=sidebar
+            )
     else:
         post = backend.getSingleBlog(id)
         if &#39;username&#39; in session:
             user = session[&#39;username&#39;]
-        return render_template(&#39;blog.html&#39;, sub=sub,user=user, post=post, single=True, sidebar=sidebar)
+        return render_template(
+            &#39;blog.html&#39;, sub=sub, user=user, post=post,
+            single=True, sidebar=sidebar
+            )
 
 
 @app.route(&#39;/admin&#39;)
 def admin():
     &#34;&#34;&#34;
-    Responds to route &#39;/admin&#39;. 
-    
-    Gets player data from backend.getView() and uses flask.render_template(&#39;admin.html&#39;) to
-    render admin page for logged in user. If there is no session that has username recorded,
+    Responds to route &#39;/admin&#39;.
+
+    Gets player data from backend.getView() and uses
+    flask.render_template(&#39;admin.html&#39;) to render admin page
+    for logged in user. If there is no session that has username recorded,
     instead redirects to render &#39;index&#39;.
     &#34;&#34;&#34;
 
@@ -139,11 +170,13 @@ def admin():
     user = None
     if &#39;username&#39; in session:
         user = session[&#39;username&#39;]
-        return render_template(&#39;admin.html&#39;, sub=sub, user=user, players=players, sidebar=sidebar)
+        return render_template(
+            &#39;admin.html&#39;, sub=sub, user=user, players=players, sidebar=sidebar
+            )
     else:
         flash(&#34;Please login!&#34;)
         return redirect(url_for(&#39;index&#39;))
-    
+
 
 @app.route(&#39;/post&#39;, methods=[&#34;POST&#34;])
 def postblog():
@@ -154,13 +187,14 @@ def postblog():
     backend.post() to store a new blog post into database.
     &#34;&#34;&#34;
 
-    r=backend.post(request.form[&#39;title&#39;], request.form[&#39;post&#39;])
+    r = backend.post(request.form[&#39;title&#39;], request.form[&#39;post&#39;])
     if r:
         flash(&#34;Success!&#34;)
     else:
         flash(&#34;Failure!&#34;)
-        
+
     return redirect(url_for(&#39;admin&#39;))
+
 
 @app.route(&#39;/login&#39;, methods=[&#39;POST&#39;])
 def login():
@@ -179,7 +213,9 @@ def login():
     given_username = request.form[&#39;username&#39;]
     given_pwd = request.form[&#39;password&#39;]
 
-    username_exists, password_matches = backend.login(given_username, given_pwd)
+    username_exists, password_matches = backend.login(
+        given_username, given_pwd
+        )
 
     if username_exists:
         print(&#34;username exists&#34;)
@@ -205,13 +241,15 @@ def logout():
     session.pop(&#39;username&#39;)
     return redirect(url_for(&#39;index&#39;))
 
+
 @app.route(&#39;/update&#39;)
 def updateIndex():
     &#34;&#34;&#34;
     Responds to route &#39;/update&#39;
 
-    This route/method is used to initiate roster update process. Gets time from latest update
-    with backend.getUpdateTimestamp() and time.time(), and if under a minute doesn&#39;t continue with
+    This route/method is used to initiate roster update process.
+    Gets time from latest update with backend.getUpdateTimestamp()
+    and time.time(), and if under a minute doesn&#39;t continue with
     updating. Otherwise runs backend.updateRoster().
     &#34;&#34;&#34;
 
@@ -219,29 +257,31 @@ def updateIndex():
     ts = backend.getUpdateTimestamp()
     print(str(int(time.time()) - ts))
 
-    # TODO also make a block in db to not allow multiple updates to run simultaneously
+    # TODO also make a block in db to not allow multiple updates to
+    # run simultaneously
     if int(time.time()) - ts &lt; 60:
-        flash(&#34;It has been less than a minute since last update! Try again later&#34;)
+        flash(&#34;Too short time since last update! Try again later&#34;)
         return &#34;nothing&#34;
 
     status = backend.updateRoster()
     print(&#34;Roster update returned with &#34; + str(status))
     return &#34;nothing&#34;
 
+
 @app.route(&#39;/addplayer&#39;, methods=[&#39;POST&#39;])
 def addPlayer():
     &#34;&#34;&#34;
     Responds to route &#39;/addplayer&#39; [POST ONLY]
 
-    Post only route used to add players to database from admin page. Gets players
-    name, role and class from form, then calls backend.addPlayer() to add player to DB.
+    Post only route used to add players to database from admin page. Gets
+    players name, role and class from form, then calls backend.addPlayer()
+    to add player to DB.
     &#34;&#34;&#34;
 
     print(&#34;Received player addition request&#34;)
     playername = request.form[&#34;name&#34;]
     playerclass = request.form[&#34;class&#34;]
     playerrole = request.form[&#34;role&#34;]
-
 
     print(playername)
     print(playerclass)
@@ -253,15 +293,18 @@ def addPlayer():
 
     return redirect(url_for(&#39;admin&#39;))
 
+
 @app.route(&#39;/editplayer&#39;, methods=[&#34;POST&#34;])
 def editPlayer():
     &#34;&#34;&#34;
     Responds to  route &#39;/editplayer&#39; [POST ONLY]
 
-    Post only method/route that is used to edit existing player roles from admin page.
-    Gets characters name and role from form, distinguishes between automatically and manually added
+    Post only method/route that is used to edit existing player roles
+    from admin page. Gets characters name and role from form, distinguishes
+    between automatically and manually added
     characters via form data and calls backend.editPlayerRole().
     &#34;&#34;&#34;
+
     attr = request.form[&#34;name&#34;].split(&#34;,&#34;)
     role = request.form[&#34;role&#34;]
     automated = False
@@ -271,12 +314,42 @@ def editPlayer():
     if &#34;automated-player&#34; in attr:
         automated = True
 
-    backend.editPlayerRole(name, role, automated)
-        
+    if request.form[&#34;submitButton&#34;] == &#34;add&#34;:
+        backend.editPlayerRole(name, role, automated)
+    elif request.form[&#34;submitButton&#34;] == &#34;delete&#34;:
+        player = {
+            &#34;name&#34;: name,
+            &#34;automated&#34;: automated
+        }
+        print(&#34;Deleting player: &#34; + str(player))
+
+        backend.removePlayer(player)
+
+    else:
+        print(&#34;Edit bork&#34;)
 
     return redirect(url_for(&#39;admin&#39;))
-    
 
+
+@app.route(&#39;/loot&#39;)
+def lootpage():
+    &#34;&#34;&#34;Acts as endpoint for /loot
+    &#34;&#34;&#34;
+    sidebar = backend.getSideBar()
+    user = &#34;&#34;
+    dbdata = backend.getLoots()
+
+    data = []
+    for item in dbdata:
+        data.append(item)
+
+
+    if &#39;username&#39; in session:
+            user = session[&#39;username&#39;]
+
+    return render_template(
+        &#39;loot.html&#39;, sub=sub, user=user, sidebar=sidebar, data=data
+        )
 
 
 if __name__ == &#34;__main__&#34;:
@@ -295,8 +368,9 @@ if __name__ == &#34;__main__&#34;:
 </code></dt>
 <dd>
 <div class="desc"><p>Responds to route '/addplayer' [POST ONLY]</p>
-<p>Post only route used to add players to database from admin page. Gets players
-name, role and class from form, then calls backend.addPlayer() to add player to DB.</p></div>
+<p>Post only route used to add players to database from admin page. Gets
+players name, role and class from form, then calls backend.addPlayer()
+to add player to DB.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -306,15 +380,15 @@ def addPlayer():
     &#34;&#34;&#34;
     Responds to route &#39;/addplayer&#39; [POST ONLY]
 
-    Post only route used to add players to database from admin page. Gets players
-    name, role and class from form, then calls backend.addPlayer() to add player to DB.
+    Post only route used to add players to database from admin page. Gets
+    players name, role and class from form, then calls backend.addPlayer()
+    to add player to DB.
     &#34;&#34;&#34;
 
     print(&#34;Received player addition request&#34;)
     playername = request.form[&#34;name&#34;]
     playerclass = request.form[&#34;class&#34;]
     playerrole = request.form[&#34;role&#34;]
-
 
     print(playername)
     print(playerclass)
@@ -331,9 +405,10 @@ def addPlayer():
 <span>def <span class="ident">admin</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Responds to route '/admin'. </p>
-<p>Gets player data from backend.getView() and uses flask.render_template('admin.html') to
-render admin page for logged in user. If there is no session that has username recorded,
+<div class="desc"><p>Responds to route '/admin'.</p>
+<p>Gets player data from backend.getView() and uses
+flask.render_template('admin.html') to render admin page
+for logged in user. If there is no session that has username recorded,
 instead redirects to render 'index'.</p></div>
 <details class="source">
 <summary>
@@ -342,10 +417,11 @@ instead redirects to render 'index'.</p></div>
 <pre><code class="python">@app.route(&#39;/admin&#39;)
 def admin():
     &#34;&#34;&#34;
-    Responds to route &#39;/admin&#39;. 
-    
-    Gets player data from backend.getView() and uses flask.render_template(&#39;admin.html&#39;) to
-    render admin page for logged in user. If there is no session that has username recorded,
+    Responds to route &#39;/admin&#39;.
+
+    Gets player data from backend.getView() and uses
+    flask.render_template(&#39;admin.html&#39;) to render admin page
+    for logged in user. If there is no session that has username recorded,
     instead redirects to render &#39;index&#39;.
     &#34;&#34;&#34;
 
@@ -355,7 +431,9 @@ def admin():
     user = None
     if &#39;username&#39; in session:
         user = session[&#39;username&#39;]
-        return render_template(&#39;admin.html&#39;, sub=sub, user=user, players=players, sidebar=sidebar)
+        return render_template(
+            &#39;admin.html&#39;, sub=sub, user=user, players=players, sidebar=sidebar
+            )
     else:
         flash(&#34;Please login!&#34;)
         return redirect(url_for(&#39;index&#39;))</code></pre>
@@ -367,8 +445,8 @@ def admin():
 <dd>
 <div class="desc"><p>Responds to routes '/blog' and '/blog/id'.</p>
 <p>If no ID is given returns blog posts
-gotten from backeng.getBlog() and with ID backend.getSingleBlog(id). Returns
-flask.render_template('blog.html') with required data.</p></div>
+gotten from backeng.getBlog() and with ID backend.getSingleBlog(id).
+Returns flask.render_template('blog.html') with required data.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -378,10 +456,10 @@ flask.render_template('blog.html') with required data.</p></div>
 def blog(id=None):
     &#34;&#34;&#34;
     Responds to routes &#39;/blog&#39; and &#39;/blog/id&#39;.
-    
+
     If no ID is given returns blog posts
-    gotten from backeng.getBlog() and with ID backend.getSingleBlog(id). Returns 
-    flask.render_template(&#39;blog.html&#39;) with required data.
+    gotten from backeng.getBlog() and with ID backend.getSingleBlog(id).
+    Returns flask.render_template(&#39;blog.html&#39;) with required data.
     &#34;&#34;&#34;
 
     sidebar = backend.getSideBar()
@@ -390,12 +468,18 @@ def blog(id=None):
         user = None
         if &#39;username&#39; in session:
             user = session[&#39;username&#39;]
-        return render_template(&#39;blog.html&#39;, sub=sub,user=user, posts=posts, single=False, sidebar=sidebar)
+        return render_template(
+            &#39;blog.html&#39;, sub=sub, user=user, posts=posts,
+            single=False, sidebar=sidebar
+            )
     else:
         post = backend.getSingleBlog(id)
         if &#39;username&#39; in session:
             user = session[&#39;username&#39;]
-        return render_template(&#39;blog.html&#39;, sub=sub,user=user, post=post, single=True, sidebar=sidebar)</code></pre>
+        return render_template(
+            &#39;blog.html&#39;, sub=sub, user=user, post=post,
+            single=True, sidebar=sidebar
+            )</code></pre>
 </details>
 </dd>
 <dt id="raidaudit.app.editPlayer"><code class="name flex">
@@ -404,8 +488,9 @@ def blog(id=None):
 <dd>
 <div class="desc"><p>Responds to
 route '/editplayer' [POST ONLY]</p>
-<p>Post only method/route that is used to edit existing player roles from admin page.
-Gets characters name and role from form, distinguishes between automatically and manually added
+<p>Post only method/route that is used to edit existing player roles
+from admin page. Gets characters name and role from form, distinguishes
+between automatically and manually added
 characters via form data and calls backend.editPlayerRole().</p></div>
 <details class="source">
 <summary>
@@ -416,10 +501,12 @@ def editPlayer():
     &#34;&#34;&#34;
     Responds to  route &#39;/editplayer&#39; [POST ONLY]
 
-    Post only method/route that is used to edit existing player roles from admin page.
-    Gets characters name and role from form, distinguishes between automatically and manually added
+    Post only method/route that is used to edit existing player roles
+    from admin page. Gets characters name and role from form, distinguishes
+    between automatically and manually added
     characters via form data and calls backend.editPlayerRole().
     &#34;&#34;&#34;
+
     attr = request.form[&#34;name&#34;].split(&#34;,&#34;)
     role = request.form[&#34;role&#34;]
     automated = False
@@ -429,8 +516,19 @@ def editPlayer():
     if &#34;automated-player&#34; in attr:
         automated = True
 
-    backend.editPlayerRole(name, role, automated)
-        
+    if request.form[&#34;submitButton&#34;] == &#34;add&#34;:
+        backend.editPlayerRole(name, role, automated)
+    elif request.form[&#34;submitButton&#34;] == &#34;delete&#34;:
+        player = {
+            &#34;name&#34;: name,
+            &#34;automated&#34;: automated
+        }
+        print(&#34;Deleting player: &#34; + str(player))
+
+        backend.removePlayer(player)
+
+    else:
+        print(&#34;Edit bork&#34;)
 
     return redirect(url_for(&#39;admin&#39;))</code></pre>
 </details>
@@ -440,7 +538,8 @@ def editPlayer():
 </code></dt>
 <dd>
 <div class="desc"><p>Responds to route '/'.</p>
-<p>Gets data required for index page from backend.getView(), backend.getLogs(), calculates time from last update of roster
+<p>Gets data required for index page from backend.getView(),
+backend.getLogs(), calculates time from last update of roster
 and returns flask.render_template('index.html') with required data.</p></div>
 <details class="source">
 <summary>
@@ -450,9 +549,10 @@ and returns flask.render_template('index.html') with required data.</p></div>
 def index():
     &#34;&#34;&#34;
     Responds to route &#39;/&#39;.
-    
-    Gets data required for index page from backend.getView(), backend.getLogs(), calculates time from last update of roster
-    and returns flask.render_template(&#39;index.html&#39;) with required data. 
+
+    Gets data required for index page from backend.getView(),
+    backend.getLogs(), calculates time from last update of roster
+    and returns flask.render_template(&#39;index.html&#39;) with required data.
     &#34;&#34;&#34;
 
     sidebar = backend.getSideBar()
@@ -460,6 +560,9 @@ def index():
     roster = backend.getView()
     logs = backend.getLogs()
     user = None
+
+    # get data to generate links in roster table
+    linkdata = json.dumps(backend.getLinkInfo())
 
     # get timestamp for last update
     updatetime = backend.getUpdateTimestamp()
@@ -472,11 +575,17 @@ def index():
     else:
         timenow = time.time()
         delta = timenow-updatetime
-        updated = time.strftime(&#34;%d days, %H hours, %M minutes, %S seconds ago&#34;, time.gmtime(delta))
+        updated = time.strftime(
+            &#34;%d days, %H hours, %M minutes, %S seconds ago&#34;,
+            time.gmtime(delta)
+            )
 
     if &#39;username&#39; in session:
         user = session[&#39;username&#39;]
-    return render_template(&#39;index.html&#39;, sub=sub, user=user, data=roster, logs=logs, updated=updated, sidebar=sidebar)</code></pre>
+    return render_template(
+        &#39;index.html&#39;, sub=sub, user=user, data=roster, logs=logs,
+        updated=updated, sidebar=sidebar, linkdata=linkdata
+        )</code></pre>
 </details>
 </dd>
 <dt id="raidaudit.app.login"><code class="name flex">
@@ -508,7 +617,9 @@ def login():
     given_username = request.form[&#39;username&#39;]
     given_pwd = request.form[&#39;password&#39;]
 
-    username_exists, password_matches = backend.login(given_username, given_pwd)
+    username_exists, password_matches = backend.login(
+        given_username, given_pwd
+        )
 
     if username_exists:
         print(&#34;username exists&#34;)
@@ -545,6 +656,36 @@ def logout():
     return redirect(url_for(&#39;index&#39;))</code></pre>
 </details>
 </dd>
+<dt id="raidaudit.app.lootpage"><code class="name flex">
+<span>def <span class="ident">lootpage</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Acts as endpoint for /loot</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.route(&#39;/loot&#39;)
+def lootpage():
+    &#34;&#34;&#34;Acts as endpoint for /loot
+    &#34;&#34;&#34;
+    sidebar = backend.getSideBar()
+    user = &#34;&#34;
+    dbdata = backend.getLoots()
+
+    data = []
+    for item in dbdata:
+        data.append(item)
+
+
+    if &#39;username&#39; in session:
+            user = session[&#39;username&#39;]
+
+    return render_template(
+        &#39;loot.html&#39;, sub=sub, user=user, sidebar=sidebar, data=data
+        )</code></pre>
+</details>
+</dd>
 <dt id="raidaudit.app.postblog"><code class="name flex">
 <span>def <span class="ident">postblog</span></span>(<span>)</span>
 </code></dt>
@@ -565,12 +706,12 @@ def postblog():
     backend.post() to store a new blog post into database.
     &#34;&#34;&#34;
 
-    r=backend.post(request.form[&#39;title&#39;], request.form[&#39;post&#39;])
+    r = backend.post(request.form[&#39;title&#39;], request.form[&#39;post&#39;])
     if r:
         flash(&#34;Success!&#34;)
     else:
         flash(&#34;Failure!&#34;)
-        
+
     return redirect(url_for(&#39;admin&#39;))</code></pre>
 </details>
 </dd>
@@ -579,8 +720,9 @@ def postblog():
 </code></dt>
 <dd>
 <div class="desc"><p>Responds to route '/update'</p>
-<p>This route/method is used to initiate roster update process. Gets time from latest update
-with backend.getUpdateTimestamp() and time.time(), and if under a minute doesn't continue with
+<p>This route/method is used to initiate roster update process.
+Gets time from latest update with backend.getUpdateTimestamp()
+and time.time(), and if under a minute doesn't continue with
 updating. Otherwise runs backend.updateRoster().</p></div>
 <details class="source">
 <summary>
@@ -591,8 +733,9 @@ def updateIndex():
     &#34;&#34;&#34;
     Responds to route &#39;/update&#39;
 
-    This route/method is used to initiate roster update process. Gets time from latest update
-    with backend.getUpdateTimestamp() and time.time(), and if under a minute doesn&#39;t continue with
+    This route/method is used to initiate roster update process.
+    Gets time from latest update with backend.getUpdateTimestamp()
+    and time.time(), and if under a minute doesn&#39;t continue with
     updating. Otherwise runs backend.updateRoster().
     &#34;&#34;&#34;
 
@@ -600,9 +743,10 @@ def updateIndex():
     ts = backend.getUpdateTimestamp()
     print(str(int(time.time()) - ts))
 
-    # TODO also make a block in db to not allow multiple updates to run simultaneously
+    # TODO also make a block in db to not allow multiple updates to
+    # run simultaneously
     if int(time.time()) - ts &lt; 60:
-        flash(&#34;It has been less than a minute since last update! Try again later&#34;)
+        flash(&#34;Too short time since last update! Try again later&#34;)
         return &#34;nothing&#34;
 
     status = backend.updateRoster()
@@ -635,6 +779,7 @@ def updateIndex():
 <li><code><a title="raidaudit.app.index" href="#raidaudit.app.index">index</a></code></li>
 <li><code><a title="raidaudit.app.login" href="#raidaudit.app.login">login</a></code></li>
 <li><code><a title="raidaudit.app.logout" href="#raidaudit.app.logout">logout</a></code></li>
+<li><code><a title="raidaudit.app.lootpage" href="#raidaudit.app.lootpage">lootpage</a></code></li>
 <li><code><a title="raidaudit.app.postblog" href="#raidaudit.app.postblog">postblog</a></code></li>
 <li><code><a title="raidaudit.app.updateIndex" href="#raidaudit.app.updateIndex">updateIndex</a></code></li>
 </ul>

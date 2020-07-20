@@ -26,22 +26,23 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from typing import List
+<pre><code class="python">from typing import Dict, List
 
 import pymongo
 from dotenv import load_dotenv
 import os
 import time
+from dataclasses import asdict
+from lootitemdata import LootItemData
+
 
 class Database:
-
     dburl = &#34;&#34;
     dbport = &#34;&#34;
     client = &#34;&#34;
     db = &#34;&#34;
     usr = &#34;&#34;
     pwd = &#34;&#34;
-    
 
     def __init__(self):
         load_dotenv()
@@ -51,15 +52,21 @@ class Database:
         self.usr = os.getenv(&#34;MONGOUSER&#34;)
         self.pwd = os.getenv(&#34;MONGOPWD&#34;)
 
-        self.client = pymongo.MongoClient(self.dburl, self.dbport, username=self.usr, password=self.pwd, connect=False)
+        self.client = pymongo.MongoClient(
+            self.dburl,
+            self.dbport,
+            username=self.usr,
+            password=self.pwd,
+            connect=False
+            )
         self.db = self.client.raidaudit
 
         print(&#34;Initialized connection to database &#34; + self.db.name)
 
-
     def getIndex(self):
         data = []
-        #self.db.players.find() + self.db.autoplayers.find()
+
+        # self.db.players.find() + self.db.autoplayers.find()
         for player in self.db.players.find():
             player[&#34;automated&#34;] = &#34;manual-player&#34;
             data.append(player)
@@ -70,7 +77,6 @@ class Database:
 
         return data
 
-    
     def getBlog(self):
         return self.db.blog.find().sort(&#34;id&#34;, pymongo.DESCENDING)
 
@@ -78,26 +84,58 @@ class Database:
         return self.db.settings.find_one()
 
     def postBlog(self, title: str, content: str) -&gt; bool:
-        self.db.blog.insert_one({ &#34;title&#34;: title, &#34;content&#34;: content, &#34;timestamp&#34;: time.strftime(&#39;%Y-%m-%d&#39;, time.localtime()), &#34;id&#34;: int(time.time())})
-        #TODO error checking
+        self.db.blog.insert_one(
+            {&#34;title&#34;: title,
+             &#34;content&#34;: content,
+             &#34;timestamp&#34;: time.strftime(
+                 &#39;%Y-%m-%d&#39;, time.localtime()
+                 ),
+             &#34;id&#34;: int(time.time())})
+
+        # TODO error checking
         return True
 
     def addPlayer(self, name, charclass, role, automated=False):
         if automated:
-            self.db.autoplayers.insert_one( {&#34;name&#34;: name, &#34;Class&#34;: charclass, &#34;Role&#34;: role, &#34;ilv&#34;: 0.0, &#34;Weekly&#34;: 0, &#34;rio&#34;: 0.0, &#34;wcln&#34;: 0.0, &#34;wclh&#34;: 0.0, &#34;wclm&#34;: 0.0} )
+            self.db.autoplayers.insert_one(
+                {
+                    &#34;name&#34;: name,
+                    &#34;Class&#34;: charclass,
+                    &#34;Role&#34;: role,
+                    &#34;ilv&#34;: 0.0,
+                    &#34;Weekly&#34;: 0,
+                    &#34;rio&#34;: 0.0,
+                    &#34;wcln&#34;: 0.0,
+                    &#34;wclh&#34;: 0.0,
+                    &#34;wclm&#34;: 0.0
+                    }
+                    )
         else:
-            self.db.players.insert_one( {&#34;name&#34;: name, &#34;Class&#34;: charclass, &#34;Role&#34;: role, &#34;ilv&#34;: 0.0, &#34;Weekly&#34;: 0, &#34;rio&#34;: 0.0, &#34;wcln&#34;: 0.0, &#34;wclh&#34;: 0.0, &#34;wclm&#34;: 0.0} )
-
+            self.db.players.insert_one(
+                {
+                    &#34;name&#34;: name,
+                    &#34;Class&#34;: charclass,
+                    &#34;Role&#34;: role, &#34;ilv&#34;: 0.0,
+                    &#34;Weekly&#34;: 0,
+                    &#34;rio&#34;: 0.0,
+                    &#34;wcln&#34;: 0.0,
+                    &#34;wclh&#34;: 0.0,
+                    &#34;wclm&#34;: 0.0
+                    }
+                    )
 
     def getManualPlayers(self):
         return self.db.players.find()
 
-
     def updateRole(self, playername, newrole, automated):
         if automated:
-            self.db.autoplayers.update_one({&#34;name&#34;: playername}, {&#34;$set&#34;: {&#34;Role&#34;: newrole}})
+            self.db.autoplayers.update_one(
+                {&#34;name&#34;: playername}, {&#34;$set&#34;: {&#34;Role&#34;: newrole}}
+                )
         else:
-            self.db.players.update_one({&#34;name&#34;: playername}, {&#34;$set&#34;: {&#34;Role&#34;: newrole}})
+            self.db.players.update_one(
+                {&#34;name&#34;: playername}, {&#34;$set&#34;: {&#34;Role&#34;: newrole}}
+                )
 
     def findRole(self, player):
         # try automated players first since they are probably majority
@@ -113,6 +151,54 @@ class Database:
             else:
                 return &#34;&#34;
 
+    def remove(self, collection: str, query: Dict[str, str]) -&gt; bool:
+
+        print(&#34;db.remove: query &#34; + str(query))
+        print(&#34;db.remove: collection &#34; + str(collection))
+
+        if collection == &#34;autoplayers&#34;:
+            r = self.db.autoplayers.delete_one(query)
+            print(&#34;Deleted &#34; + str(r.deleted_count) + &#34; items&#34;)
+            return True
+
+        elif collection == &#34;players&#34;:
+            r = self.db.players.delete_one(query)
+            print(&#34;Deleted &#34; + str(r.deleted_count) + &#34; items&#34;)
+            return True
+        else:
+            print(&#34;db.remove could not find collection&#34;)
+            return False
+
+    def getLoot(self):
+        &#34;&#34;&#34;Gets Loot entries from DB
+
+        Get all entries in collection &#34;loot&#34; in database.
+
+        Returns:
+            res: pymongo cursor to query response
+        &#34;&#34;&#34;
+
+        res = self.db.loot.find(projection={&#34;_id&#34;: False})
+        return res
+
+    def addLoot(self, newloot: List[LootItemData]) -&gt; bool:
+        &#34;&#34;&#34;Adds new loot data to DB
+
+        A method to insert data parsed to BBCode via backend.getLootLog()
+        to database.
+
+        Args:
+            newloot: 
+
+        Returns:
+            success: bool
+        &#34;&#34;&#34;
+
+        for entry in newloot:
+            self.db.loot.insert_one(asdict(entry))
+
+        return True
+
 
 if __name__ == &#34;__main__&#34;:
     db = Database()
@@ -121,9 +207,7 @@ if __name__ == &#34;__main__&#34;:
     print(&#34;getIndex&#34;)
 
     for item in db.getIndex():
-        print(item)
-
-          </code></pre>
+        print(item)</code></pre>
 </details>
 </section>
 <section>
@@ -145,14 +229,12 @@ if __name__ == &#34;__main__&#34;:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Database:
-
     dburl = &#34;&#34;
     dbport = &#34;&#34;
     client = &#34;&#34;
     db = &#34;&#34;
     usr = &#34;&#34;
     pwd = &#34;&#34;
-    
 
     def __init__(self):
         load_dotenv()
@@ -162,15 +244,21 @@ if __name__ == &#34;__main__&#34;:
         self.usr = os.getenv(&#34;MONGOUSER&#34;)
         self.pwd = os.getenv(&#34;MONGOPWD&#34;)
 
-        self.client = pymongo.MongoClient(self.dburl, self.dbport, username=self.usr, password=self.pwd, connect=False)
+        self.client = pymongo.MongoClient(
+            self.dburl,
+            self.dbport,
+            username=self.usr,
+            password=self.pwd,
+            connect=False
+            )
         self.db = self.client.raidaudit
 
         print(&#34;Initialized connection to database &#34; + self.db.name)
 
-
     def getIndex(self):
         data = []
-        #self.db.players.find() + self.db.autoplayers.find()
+
+        # self.db.players.find() + self.db.autoplayers.find()
         for player in self.db.players.find():
             player[&#34;automated&#34;] = &#34;manual-player&#34;
             data.append(player)
@@ -181,7 +269,6 @@ if __name__ == &#34;__main__&#34;:
 
         return data
 
-    
     def getBlog(self):
         return self.db.blog.find().sort(&#34;id&#34;, pymongo.DESCENDING)
 
@@ -189,26 +276,58 @@ if __name__ == &#34;__main__&#34;:
         return self.db.settings.find_one()
 
     def postBlog(self, title: str, content: str) -&gt; bool:
-        self.db.blog.insert_one({ &#34;title&#34;: title, &#34;content&#34;: content, &#34;timestamp&#34;: time.strftime(&#39;%Y-%m-%d&#39;, time.localtime()), &#34;id&#34;: int(time.time())})
-        #TODO error checking
+        self.db.blog.insert_one(
+            {&#34;title&#34;: title,
+             &#34;content&#34;: content,
+             &#34;timestamp&#34;: time.strftime(
+                 &#39;%Y-%m-%d&#39;, time.localtime()
+                 ),
+             &#34;id&#34;: int(time.time())})
+
+        # TODO error checking
         return True
 
     def addPlayer(self, name, charclass, role, automated=False):
         if automated:
-            self.db.autoplayers.insert_one( {&#34;name&#34;: name, &#34;Class&#34;: charclass, &#34;Role&#34;: role, &#34;ilv&#34;: 0.0, &#34;Weekly&#34;: 0, &#34;rio&#34;: 0.0, &#34;wcln&#34;: 0.0, &#34;wclh&#34;: 0.0, &#34;wclm&#34;: 0.0} )
+            self.db.autoplayers.insert_one(
+                {
+                    &#34;name&#34;: name,
+                    &#34;Class&#34;: charclass,
+                    &#34;Role&#34;: role,
+                    &#34;ilv&#34;: 0.0,
+                    &#34;Weekly&#34;: 0,
+                    &#34;rio&#34;: 0.0,
+                    &#34;wcln&#34;: 0.0,
+                    &#34;wclh&#34;: 0.0,
+                    &#34;wclm&#34;: 0.0
+                    }
+                    )
         else:
-            self.db.players.insert_one( {&#34;name&#34;: name, &#34;Class&#34;: charclass, &#34;Role&#34;: role, &#34;ilv&#34;: 0.0, &#34;Weekly&#34;: 0, &#34;rio&#34;: 0.0, &#34;wcln&#34;: 0.0, &#34;wclh&#34;: 0.0, &#34;wclm&#34;: 0.0} )
-
+            self.db.players.insert_one(
+                {
+                    &#34;name&#34;: name,
+                    &#34;Class&#34;: charclass,
+                    &#34;Role&#34;: role, &#34;ilv&#34;: 0.0,
+                    &#34;Weekly&#34;: 0,
+                    &#34;rio&#34;: 0.0,
+                    &#34;wcln&#34;: 0.0,
+                    &#34;wclh&#34;: 0.0,
+                    &#34;wclm&#34;: 0.0
+                    }
+                    )
 
     def getManualPlayers(self):
         return self.db.players.find()
 
-
     def updateRole(self, playername, newrole, automated):
         if automated:
-            self.db.autoplayers.update_one({&#34;name&#34;: playername}, {&#34;$set&#34;: {&#34;Role&#34;: newrole}})
+            self.db.autoplayers.update_one(
+                {&#34;name&#34;: playername}, {&#34;$set&#34;: {&#34;Role&#34;: newrole}}
+                )
         else:
-            self.db.players.update_one({&#34;name&#34;: playername}, {&#34;$set&#34;: {&#34;Role&#34;: newrole}})
+            self.db.players.update_one(
+                {&#34;name&#34;: playername}, {&#34;$set&#34;: {&#34;Role&#34;: newrole}}
+                )
 
     def findRole(self, player):
         # try automated players first since they are probably majority
@@ -222,7 +341,55 @@ if __name__ == &#34;__main__&#34;:
                 return found[&#34;Role&#34;]
 
             else:
-                return &#34;&#34;</code></pre>
+                return &#34;&#34;
+
+    def remove(self, collection: str, query: Dict[str, str]) -&gt; bool:
+
+        print(&#34;db.remove: query &#34; + str(query))
+        print(&#34;db.remove: collection &#34; + str(collection))
+
+        if collection == &#34;autoplayers&#34;:
+            r = self.db.autoplayers.delete_one(query)
+            print(&#34;Deleted &#34; + str(r.deleted_count) + &#34; items&#34;)
+            return True
+
+        elif collection == &#34;players&#34;:
+            r = self.db.players.delete_one(query)
+            print(&#34;Deleted &#34; + str(r.deleted_count) + &#34; items&#34;)
+            return True
+        else:
+            print(&#34;db.remove could not find collection&#34;)
+            return False
+
+    def getLoot(self):
+        &#34;&#34;&#34;Gets Loot entries from DB
+
+        Get all entries in collection &#34;loot&#34; in database.
+
+        Returns:
+            res: pymongo cursor to query response
+        &#34;&#34;&#34;
+
+        res = self.db.loot.find(projection={&#34;_id&#34;: False})
+        return res
+
+    def addLoot(self, newloot: List[LootItemData]) -&gt; bool:
+        &#34;&#34;&#34;Adds new loot data to DB
+
+        A method to insert data parsed to BBCode via backend.getLootLog()
+        to database.
+
+        Args:
+            newloot: 
+
+        Returns:
+            success: bool
+        &#34;&#34;&#34;
+
+        for entry in newloot:
+            self.db.loot.insert_one(asdict(entry))
+
+        return True</code></pre>
 </details>
 <h3>Class variables</h3>
 <dl>
@@ -253,6 +420,46 @@ if __name__ == &#34;__main__&#34;:
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="raidaudit.db.Database.addLoot"><code class="name flex">
+<span>def <span class="ident">addLoot</span></span>(<span>self, newloot: List[lootitemdata.LootItemData]) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adds new loot data to DB</p>
+<p>A method to insert data parsed to BBCode via backend.getLootLog()
+to database.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>newloot</code></strong></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>success</code></dt>
+<dd>bool</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def addLoot(self, newloot: List[LootItemData]) -&gt; bool:
+    &#34;&#34;&#34;Adds new loot data to DB
+
+    A method to insert data parsed to BBCode via backend.getLootLog()
+    to database.
+
+    Args:
+        newloot: 
+
+    Returns:
+        success: bool
+    &#34;&#34;&#34;
+
+    for entry in newloot:
+        self.db.loot.insert_one(asdict(entry))
+
+    return True</code></pre>
+</details>
+</dd>
 <dt id="raidaudit.db.Database.addPlayer"><code class="name flex">
 <span>def <span class="ident">addPlayer</span></span>(<span>self, name, charclass, role, automated=False)</span>
 </code></dt>
@@ -264,9 +471,32 @@ if __name__ == &#34;__main__&#34;:
 </summary>
 <pre><code class="python">def addPlayer(self, name, charclass, role, automated=False):
     if automated:
-        self.db.autoplayers.insert_one( {&#34;name&#34;: name, &#34;Class&#34;: charclass, &#34;Role&#34;: role, &#34;ilv&#34;: 0.0, &#34;Weekly&#34;: 0, &#34;rio&#34;: 0.0, &#34;wcln&#34;: 0.0, &#34;wclh&#34;: 0.0, &#34;wclm&#34;: 0.0} )
+        self.db.autoplayers.insert_one(
+            {
+                &#34;name&#34;: name,
+                &#34;Class&#34;: charclass,
+                &#34;Role&#34;: role,
+                &#34;ilv&#34;: 0.0,
+                &#34;Weekly&#34;: 0,
+                &#34;rio&#34;: 0.0,
+                &#34;wcln&#34;: 0.0,
+                &#34;wclh&#34;: 0.0,
+                &#34;wclm&#34;: 0.0
+                }
+                )
     else:
-        self.db.players.insert_one( {&#34;name&#34;: name, &#34;Class&#34;: charclass, &#34;Role&#34;: role, &#34;ilv&#34;: 0.0, &#34;Weekly&#34;: 0, &#34;rio&#34;: 0.0, &#34;wcln&#34;: 0.0, &#34;wclh&#34;: 0.0, &#34;wclm&#34;: 0.0} )</code></pre>
+        self.db.players.insert_one(
+            {
+                &#34;name&#34;: name,
+                &#34;Class&#34;: charclass,
+                &#34;Role&#34;: role, &#34;ilv&#34;: 0.0,
+                &#34;Weekly&#34;: 0,
+                &#34;rio&#34;: 0.0,
+                &#34;wcln&#34;: 0.0,
+                &#34;wclh&#34;: 0.0,
+                &#34;wclm&#34;: 0.0
+                }
+                )</code></pre>
 </details>
 </dd>
 <dt id="raidaudit.db.Database.findRole"><code class="name flex">
@@ -317,7 +547,8 @@ if __name__ == &#34;__main__&#34;:
 </summary>
 <pre><code class="python">def getIndex(self):
     data = []
-    #self.db.players.find() + self.db.autoplayers.find()
+
+    # self.db.players.find() + self.db.autoplayers.find()
     for player in self.db.players.find():
         player[&#34;automated&#34;] = &#34;manual-player&#34;
         data.append(player)
@@ -327,6 +558,34 @@ if __name__ == &#34;__main__&#34;:
         data.append(player)
 
     return data</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.db.Database.getLoot"><code class="name flex">
+<span>def <span class="ident">getLoot</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets Loot entries from DB</p>
+<p>Get all entries in collection "loot" in database.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>res</code></dt>
+<dd>pymongo cursor to query response</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getLoot(self):
+    &#34;&#34;&#34;Gets Loot entries from DB
+
+    Get all entries in collection &#34;loot&#34; in database.
+
+    Returns:
+        res: pymongo cursor to query response
+    &#34;&#34;&#34;
+
+    res = self.db.loot.find(projection={&#34;_id&#34;: False})
+    return res</code></pre>
 </details>
 </dd>
 <dt id="raidaudit.db.Database.getManualPlayers"><code class="name flex">
@@ -365,9 +624,44 @@ if __name__ == &#34;__main__&#34;:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def postBlog(self, title: str, content: str) -&gt; bool:
-    self.db.blog.insert_one({ &#34;title&#34;: title, &#34;content&#34;: content, &#34;timestamp&#34;: time.strftime(&#39;%Y-%m-%d&#39;, time.localtime()), &#34;id&#34;: int(time.time())})
-    #TODO error checking
+    self.db.blog.insert_one(
+        {&#34;title&#34;: title,
+         &#34;content&#34;: content,
+         &#34;timestamp&#34;: time.strftime(
+             &#39;%Y-%m-%d&#39;, time.localtime()
+             ),
+         &#34;id&#34;: int(time.time())})
+
+    # TODO error checking
     return True</code></pre>
+</details>
+</dd>
+<dt id="raidaudit.db.Database.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, collection: str, query: Dict[str, str]) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self, collection: str, query: Dict[str, str]) -&gt; bool:
+
+    print(&#34;db.remove: query &#34; + str(query))
+    print(&#34;db.remove: collection &#34; + str(collection))
+
+    if collection == &#34;autoplayers&#34;:
+        r = self.db.autoplayers.delete_one(query)
+        print(&#34;Deleted &#34; + str(r.deleted_count) + &#34; items&#34;)
+        return True
+
+    elif collection == &#34;players&#34;:
+        r = self.db.players.delete_one(query)
+        print(&#34;Deleted &#34; + str(r.deleted_count) + &#34; items&#34;)
+        return True
+    else:
+        print(&#34;db.remove could not find collection&#34;)
+        return False</code></pre>
 </details>
 </dd>
 <dt id="raidaudit.db.Database.updateRole"><code class="name flex">
@@ -381,9 +675,13 @@ if __name__ == &#34;__main__&#34;:
 </summary>
 <pre><code class="python">def updateRole(self, playername, newrole, automated):
     if automated:
-        self.db.autoplayers.update_one({&#34;name&#34;: playername}, {&#34;$set&#34;: {&#34;Role&#34;: newrole}})
+        self.db.autoplayers.update_one(
+            {&#34;name&#34;: playername}, {&#34;$set&#34;: {&#34;Role&#34;: newrole}}
+            )
     else:
-        self.db.players.update_one({&#34;name&#34;: playername}, {&#34;$set&#34;: {&#34;Role&#34;: newrole}})</code></pre>
+        self.db.players.update_one(
+            {&#34;name&#34;: playername}, {&#34;$set&#34;: {&#34;Role&#34;: newrole}}
+            )</code></pre>
 </details>
 </dd>
 </dl>
@@ -407,6 +705,7 @@ if __name__ == &#34;__main__&#34;:
 <li>
 <h4><code><a title="raidaudit.db.Database" href="#raidaudit.db.Database">Database</a></code></h4>
 <ul class="two-column">
+<li><code><a title="raidaudit.db.Database.addLoot" href="#raidaudit.db.Database.addLoot">addLoot</a></code></li>
 <li><code><a title="raidaudit.db.Database.addPlayer" href="#raidaudit.db.Database.addPlayer">addPlayer</a></code></li>
 <li><code><a title="raidaudit.db.Database.client" href="#raidaudit.db.Database.client">client</a></code></li>
 <li><code><a title="raidaudit.db.Database.db" href="#raidaudit.db.Database.db">db</a></code></li>
@@ -415,10 +714,12 @@ if __name__ == &#34;__main__&#34;:
 <li><code><a title="raidaudit.db.Database.findRole" href="#raidaudit.db.Database.findRole">findRole</a></code></li>
 <li><code><a title="raidaudit.db.Database.getBlog" href="#raidaudit.db.Database.getBlog">getBlog</a></code></li>
 <li><code><a title="raidaudit.db.Database.getIndex" href="#raidaudit.db.Database.getIndex">getIndex</a></code></li>
+<li><code><a title="raidaudit.db.Database.getLoot" href="#raidaudit.db.Database.getLoot">getLoot</a></code></li>
 <li><code><a title="raidaudit.db.Database.getManualPlayers" href="#raidaudit.db.Database.getManualPlayers">getManualPlayers</a></code></li>
 <li><code><a title="raidaudit.db.Database.getSettings" href="#raidaudit.db.Database.getSettings">getSettings</a></code></li>
 <li><code><a title="raidaudit.db.Database.postBlog" href="#raidaudit.db.Database.postBlog">postBlog</a></code></li>
 <li><code><a title="raidaudit.db.Database.pwd" href="#raidaudit.db.Database.pwd">pwd</a></code></li>
+<li><code><a title="raidaudit.db.Database.remove" href="#raidaudit.db.Database.remove">remove</a></code></li>
 <li><code><a title="raidaudit.db.Database.updateRole" href="#raidaudit.db.Database.updateRole">updateRole</a></code></li>
 <li><code><a title="raidaudit.db.Database.usr" href="#raidaudit.db.Database.usr">usr</a></code></li>
 </ul>
