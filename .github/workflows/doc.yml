@@ -22,7 +22,7 @@ jobs:
       
     - name: Install requirements
       run: |
-        pip install pdoc
+        pip3 install pdoc3
         
     - name: Run pdoc
       run: |
