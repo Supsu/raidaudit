@@ -4,17 +4,17 @@ import os
 
 
 class RIO:
-"""Module that handles communicating with raider.io API
+    """Module that handles communicating with raider.io API
 
-Module gets region, realm and guild from ENV. It uses those
-values in combination with character names for some methods
-to get mythic+ and raid data to display on site.
+    Module gets region, realm and guild from ENV. It uses those
+    values in combination with character names for some methods
+    to get mythic+ and raid data to display on site.
 
-Attributes:
-    _region: Region read from ENV
-    _realm: Realm read from ENV
-    _guild: Guild read from ENV
-"""
+    Attributes:
+        _region: Region read from ENV
+        _realm: Realm read from ENV
+        _guild: Guild read from ENV
+    """
 
     _region = ""
     _realm = ""
