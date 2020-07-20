@@ -31,7 +31,7 @@ jobs:
         
     - name: Run pdoc
       run: |
-          pdoc --html --force --output-dir ./doc/pdoc
+          pdoc --html --force --output-dir ./doc/pdoc .
 
     - name: Commit changes
       run: |
