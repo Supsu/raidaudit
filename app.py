@@ -103,6 +103,8 @@ def blog(id=None):
     if id is None:
         page = request.args.get('page', default=1, type=int)
         skipamount = (page-1)*5
+        if skipamount < 0:
+            skipamount = 0
         limitamount = 5
         posts = backend.getBlog().skip(skipamount).limit(limitamount)
         user = None
