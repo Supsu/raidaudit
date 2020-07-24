@@ -29,6 +29,7 @@
         <ul class="navbar-nav">
             <li class="nav-item"><a class="nav-link" href="/">Front page</a></li>
             <li class="nav-item"><a class="nav-link" href="/blog">Blog</a></li>
+            <li class="nav-item"><a class="nav-link" href="/attendance">Attendance</a></li>
             <li class="nav-item"><a class="nav-link" href="/loot">Loot history</a></li>
             <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
         </ul>
@@ -41,7 +42,7 @@
             </form>
           {% else %}
             <form action="logout", method="GET">
-            <button type="submit" class="btn btn-outline-success" action="/logout" method="post">
+              <button type="submit" class="btn btn-outline-success" action="/logout" method="post">
               Log out <span class="badge badge-info">{{user}}</span>
             </button>
           </form>

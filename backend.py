@@ -449,12 +449,15 @@ class Backend:
 
         attendance = {}
         raids = []
-
+        formattedraids = []
         for raid in attendanceData:
             raids.append((raid["code"], raid["startTime"]))
             for player in raid["players"]:
-                if player["name"] not in attendance:
-                    attendance[player["name"]] = {}
+                if player["name"] not in attendance and len(raids)>0:
+                    tmp = {}
+                    for r in raids[:-1]:
+                        tmp[r[0]] = 0
+                    attendance[player["name"]] = tmp
                 attendance[player["name"]][raid["code"]] = str(player["presence"])
 
                 
@@ -465,8 +468,12 @@ class Backend:
                 if raidcode not in attendance[player]:
                     attendance[player][raidcode] = "0"
 
+        for entry in raids:
+            new1 = time.strftime("%d/%m", time.gmtime(entry[1]))
+            formattedraids.append((entry[0],new1))
 
-        return raids, attendance, token
+        print(formattedraids)
+        return formattedraids, attendance, token
 
 
 if __name__ == "__main__":
