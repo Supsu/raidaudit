@@ -8,7 +8,7 @@
         <div class="card">
             <div class="card-header">{{ post["title"] }}</div>
             <div class="card-body">
-                <p class="card-text">{{ post["content"] }}</p>
+                <p class="card-text">{{ post["content"]|safe|truncate }}</p>
                 <div class="card-footer text-muted">
                     Posted: {{ post["timestamp"] }} -- ID: <a href="blog/{{ post['id'] }}" >{{ post["id"] }}</a>
                     {% if user %}
@@ -27,7 +27,7 @@
 <div class="card">
     <div class="card-header">{{ post["title"] }}</div>
     <div class="card-body">
-    <p class="card-text">{{ post["content"] }}</p>
+    <p class="card-text">{{ post["content"]|safe }}</p>
     <div class="card-footer text-muted">
         Posted: {{ post["timestamp"] }} -- ID: <a href="{{ post['id'] }}" >{{ post["id"] }}</a>
         {% if user %}
