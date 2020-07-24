@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+        <table>
+            <thead>
+            <th>-</th>
+            {% for raid in raids %}
+                <th>{{raid[0]}}</th>
+            {% endfor %}
+            </thead>
+            {% for player in data %}
+                <tr class="playerrow">
+                    <td class="playername">{{ player }}</td>
+                    {% for raid in data[player] %}
+                        <td class="attdata">{{raid}}{{ data[player[raid]] }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+
+
+{% endblock %}

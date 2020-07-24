@@ -8,6 +8,7 @@ from db import Database
 from bnet import Bnet
 from rio import RIO
 from wcl import WCL
+from wcl_graphql import WCLG
 import json
 import csv
 import time
@@ -26,6 +27,7 @@ class Backend:
     wcl = ""
     realm = ""
     region = ""
+    wclg = ""
 
     def __init__(self):
         load_dotenv()
@@ -35,6 +37,7 @@ class Backend:
         self.wcl = WCL()
         self.region = os.getenv("WOWREGION")
         self.realm = os.getenv("WOWREALM")
+        self.wclg = WCLG()
 
     def getView(self) -> List[Dict[str, str]]:
         """
@@ -432,8 +435,40 @@ class Backend:
 
         return True
 
+    def getAttendance(self) -> List:
+        """Gets attendance data from wcl_graphql
+        """
+
+        settings = self.db.getSettings()
+        token = None
+        if "guildTagId" in settings:
+            token = settings["guildTagId"]
+        
+
+        attendanceData = self.wclg.getAttendance(token)
+
+        attendance = {}
+        raids = []
+
+        for raid in attendanceData:
+            raids.append((raid["code"], raid["startTime"]))
+            for player in raid["players"]:
+                if player["name"] not in attendance:
+                    attendance[player["name"]] = {}
+                attendance[player["name"]][raid["code"]] = str(player["presence"])
+
+                
+
+        for raid in raids:
+            raidcode = raid[0]
+            for player in attendance:
+                if raidcode not in attendance[player]:
+                    attendance[player][raidcode] = "0"
+
+
+        return raids, attendance, token
+
 
 if __name__ == "__main__":
     back = Backend()
-    back.addLoots()
-    back.getLoots()
+    print(back.getAttendance())

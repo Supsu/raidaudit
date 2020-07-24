@@ -361,5 +361,19 @@ def addloot():
     return redirect(url_for('admin'))
 
 
+@app.route('/attendance')
+def attendance():
+    sidebar = backend.getSideBar()
+    raids, attendance, token = backend.getAttendance()
+
+    if 'username' in session:
+            user = session['username']
+    
+    return render_template(
+        'attendance.html', sub=sub, user=user, sidebar=sidebar,
+        data=attendance, raids=raids, token=str(token)
+    )
+
+
 if __name__ == "__main__":
     app.run(debug=True)

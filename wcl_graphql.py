@@ -20,7 +20,7 @@ class WCLG:
             })
 
         self.token = r.json()["access_token"]
-        print(self.token)
+        #print(self.token)
 
     def getGuildTags(self):
 
@@ -54,13 +54,13 @@ class WCLG:
 
         tagstring = ""
         if tag is not None:
-            tagstring = "(guildTagId: {0}".format(tag)
+            tagstring = " ,guildTagId: {0}".format(tag)
 
         querystring = f"""
             {{
                 guildData {{
                     guild ( name: "{self.guild}", serverRegion: "{self.region}", serverSlug: "{self.realm}" ) {{
-                        attendance {tagstring} {{
+                        attendance (limit: 25{tagstring}) {{
                             data  {{
                                 code
                                 players {{
@@ -80,14 +80,14 @@ class WCLG:
             }}
         """
 
-        print(querystring)
+        #print(querystring)
 
         headers = {"Authorization": "Bearer {0}".format(self.token)}
 
         r = requests.post(self.clientapi + "api/v2/client", json = {'query': querystring}, headers=headers)
 
-        print(r)
-        print(r.json())
+        #print(r)
+        #print(r.json())
 
         if "error" in r.json():
             return []
