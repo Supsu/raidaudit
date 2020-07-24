@@ -101,7 +101,10 @@ def blog(id=None):
 
     sidebar = backend.getSideBar()
     if id is None:
-        posts = backend.getBlog()
+        page = request.args.get('page', default=1, type=int)
+        skipamount = (page-1)*5
+        limitamount = 5
+        posts = backend.getBlog().skip(skipamount).limit(limitamount)
         user = None
         if 'username' in session:
             user = session['username']
