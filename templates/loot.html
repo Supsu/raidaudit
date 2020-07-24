@@ -15,11 +15,11 @@
             <td class="lhtime"><span class="badge badge-secondary">{{row.received_time}}</span></td>
             <td class="lhname" data-class="{{ row.recipient_class }}">{{ row.recipient }} 
                 {% if row.recipient != row.original_owner %}
-                <span class="badge badge-info">{{ row.original_owner }}</span>
+                <br><span class="badge badge-secondary">{{ row.original_owner }}</span>
                 {% endif %}
             </td>
             <td class="lhitem"><a href="{{row.item_url}}">{{row.item_name}}</a></td>
-            <td class="lhresponse"><span class="badge badge-warning">{{ row.response }}</span></td>
+            <td class="lhresponse">{{ row.response }}</td>
             <td class="lhboss"><span class="badge badge-danger" title="{{ row.instance_name }}">{{ row.boss_name }}</span></td> 
           </tr>
         {% endfor %}
