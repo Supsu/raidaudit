@@ -106,13 +106,18 @@ def blog(id=None):
         if skipamount < 0:
             skipamount = 0
         limitamount = 5
-        posts = backend.getBlog().skip(skipamount).limit(limitamount)
+        postc = backend.getBlog()
+        postcount = postc.count()
+
+        pagecount = [*range(postcount//5 +1)]
+
+        posts = postc.skip(skipamount).limit(limitamount)
         user = None
         if 'username' in session:
             user = session['username']
         return render_template(
             'blog.html', sub=sub, user=user, posts=posts,
-            single=False, sidebar=sidebar
+            single=False, sidebar=sidebar, pagecount=pagecount
             )
     else:
         post = backend.getSingleBlog(id)
@@ -309,17 +314,32 @@ def lootpage():
     sidebar = backend.getSideBar()
     user = ""
     dbdata = backend.getLoots()
+    page = request.args.get('page', default=1, type=int)
 
-    data = []
+    alldata = []
     for item in dbdata:
-        data.append(item)
+        alldata.append(item)
+
+    itemsPerPage = 10
+
+    dstart = (page-1)*itemsPerPage
+    if dstart < 0:
+        dstart = 0
+    dend = dstart+itemsPerPage
+    if dend >= len(alldata):
+        dend = len(alldata)-1
+
+    pagecount = [*range(len(alldata)//itemsPerPage +1)]
+    
+    data = alldata[dstart:dend]
 
 
     if 'username' in session:
             user = session['username']
 
     return render_template(
-        'loot.html', sub=sub, user=user, sidebar=sidebar, data=data
+        'loot.html', sub=sub, user=user, sidebar=sidebar,
+        data=data, pagecount=pagecount
         )
 
 @app.route('/addloot', methods=['POST'])

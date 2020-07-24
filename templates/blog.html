@@ -20,7 +20,20 @@
         <br>
         <br>
 
+        
+
     {% endfor %}
+    <nav>
+        <ul class="pagination bg-dark justify-content-center">
+            <li class="page-item bg-dark"><a class="page-link bg-dark text-light" href="?page=1"><span>&laquo;</span></a></li>
+            {% for page in pagecount %}
+                <li class="page-item bg-dark"><a class="page-link bg-dark text-light" href="?page={{loop.index}}">{{loop.index}}</a></li>
+                {% if loop.last %}
+                    <li class="page-item bg-dark"><a class="page-link bg-dark text-light" href="?page={{loop.index}}"><span>&raquo;</span></a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
 
 {% else %}
 
