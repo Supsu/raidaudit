@@ -6,7 +6,7 @@
     {% for post in posts %}
 
         <div class="card">
-            <div class="card-header">{{ post["title"] }}</div>
+            <div class="card-header"><a href="blog/{{ post['id'] }}" >{{ post["title"] }}</a></div>
             <div class="card-body">
                 <p class="card-text">{{ post["content"]|safe|truncate }}</p>
                 <div class="card-footer text-muted">
