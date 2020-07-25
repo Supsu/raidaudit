@@ -48,3 +48,28 @@ plain text.
   "adminname": string	-- Username for admin login
   "adminpwd": string	-- Password for admin login
 }
+
+
+---------------
+
+attendance data
+This collection stores data about player attendance
+in various raids. It contains two different kinds of data,
+log metadata and attendance.
+
+log metadata:
+{
+  "tag": string         -- [META]
+  "log_id": string      -- WCL log id
+  "zone_id": int        -- zone id of the raid in question
+  "raid_name": string   -- raid name as a string
+  "start_time": int
+}
+player data:
+{
+  "tag": string             -- [PLAYER]
+  "log_id": string          -- WCL log id that this document is related to
+  "name": string            -- Player name
+  "player_class": string    -- player character class
+  "benched": bool          -- Whether the player was benched or not
+}

@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from typing import Dict, List, Tuple, Union
 
 from datetime import datetime
+
+from attendancedata import AttendanceData
 from db import Database
 from bnet import Bnet
 from rio import RIO
@@ -435,47 +437,48 @@ class Backend:
 
         return True
 
-    def getAttendance(self) -> List:
-        """Gets attendance data from wcl_graphql
+    def updateAttendance(self, full: bool = False):
         """
+        Upadtes attendance data in the DB from WCL GraphQL
+        Args:
+            full (bool):
+                Full update of the attendance data (rolls through all raid logs). Doesn't do anything right now,
 
+        Returns:
+            None
+        """
         settings = self.db.getSettings()
         token = None
         if "guildTagId" in settings:
             token = settings["guildTagId"]
-        
 
         attendanceData = self.wclg.getAttendance(token)
+        for att in attendanceData:
+            self.db.addAttendance(att)
 
-        attendance = {}
-        raids = []
-        formattedraids = []
-        for raid in attendanceData:
-            raids.append((raid["code"], raid["startTime"]))
-            for player in raid["players"]:
-                if player["name"] not in attendance and len(raids)>0:
-                    tmp = {}
-                    for r in raids[:-1]:
-                        tmp[r[0]] = 0
-                    attendance[player["name"]] = tmp
-                attendance[player["name"]][raid["code"]] = str(player["presence"])
+    def getAttendance(self) -> Dict[int, Tuple[int, Dict[str, AttendanceData]]]:
+        """
+        Fetches full attendance data from the DB
 
-                
+        Returns:
+            A thing.
+            1. Dict with raid IDs as keys containing...
+                2. A tuple with (num_logs, and ...
+                    3. Dict with player names as keys and AttendanceData as values
 
-        for raid in raids:
-            raidcode = raid[0]
-            for player in attendance:
-                if raidcode not in attendance[player]:
-                    attendance[player][raidcode] = "0"
+            Looping through the first dict gets you attendance data per-raid, then looping through [1] gives you
+            attendance data for that raid per player.
+        """
 
-        for entry in raids:
-            new1 = time.strftime("%d/%m", time.gmtime(entry[1]))
-            formattedraids.append((entry[0],new1))
+        known_raid_ids = self.db.getAttendanceRaids()
+        attendance_data: Dict[int, Tuple[int, AttendanceData]] = {}
+        for raid_id in known_raid_ids:
+            attendance_data[raid_id] = self.db.getAttendance(raid_id=raid_id)
 
-        print(formattedraids)
-        return formattedraids, attendance, token
+        return attendance_data
 
 
 if __name__ == "__main__":
     back = Backend()
+    back.updateAttendance()
     print(back.getAttendance())

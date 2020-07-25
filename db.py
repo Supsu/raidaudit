@@ -1,10 +1,12 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import pymongo
 from dotenv import load_dotenv
 import os
 import time
 from dataclasses import asdict
+
+from attendancedata import AttendanceData
 from lootitemdata import LootItemData
 
 
@@ -170,6 +172,129 @@ class Database:
             self.db.loot.insert_one(asdict(entry))
 
         return True
+
+    def addAttendance(self, wcl_attendance):
+        """
+        Adds a piece of attendance data into the db if it doesn't exist there yet.
+
+        Args:
+            wcl_attendance (dict):
+                Contains attendance data from wcl
+
+        Returns:
+            True if data was added, False otherwise
+        """
+
+        log_id = wcl_attendance['code']
+        players = wcl_attendance['players']
+        start_time = wcl_attendance['start_time']
+        zone_id = wcl_attendance['zone']['id']
+        raid_name = wcl_attendance['zone']['name']
+
+        col: pymongo.collection.Collection = self.db['attendance_collection']
+
+        # Ensure that indexing is done
+        attendance_index = "attendance_index"
+        if attendance_index not in col.index_information():
+            print("Creating attendance index...")
+            keys = [('tag', pymongo.DESCENDING), ('log_id', pymongo.DESCENDING),
+                    ('name', pymongo.DESCENDING), ('benched', pymongo.DESCENDING)]
+            col.create_index(keys, name=attendance_index, unique=False, sparse=True)
+
+        raid_index = 'attendance_raid_index'
+        if raid_index not in col.index_information():
+            print("Creating attendance raid index...")
+            keys = [('tag', pymongo.DESCENDING), ('zone_id', pymongo.DESCENDING),
+                    ('start_time', pymongo.DESCENDING)]
+            col.create_index(keys, name=raid_index, unique=False, sparse=True)
+
+        raid_index = 'attendance_raid_name_index'
+        if raid_index not in col.index_information():
+            print("Creating attendance raid name index...")
+            keys = [('tag', pymongo.DESCENDING), ('raid_name', pymongo.DESCENDING),
+                    ('start_time', pymongo.DESCENDING)]
+            col.create_index(keys, name=raid_index, unique=False, sparse=True)
+
+        if col.find_one({'tag': 'META', 'log_id':log_id}) is None:
+            return False
+
+        datas = []
+        metadata = {'tag': 'META', 'log_id': log_id, 'zone_id': zone_id, 'raid_name': raid_name, 'start_time': start_time}
+        datas.append(metadata)
+        for player in players:
+            data = {'tag': 'PLAYER', 'log_id': log_id, 'name': player['name'], 'player_class': player['type']}
+            if player['presence'] == 1:
+                data['benched'] = False
+            elif player['presence'] == 2:
+                data['benched'] = True
+            datas.append(data)
+        result = col.insert_many(datas)
+
+        if len(result) > 0:
+            return True
+        else:
+            return False
+
+    def getAttendanceRaids(self) -> Dict[int, str]:
+        """
+        Fetches known raid IDs and names from the attendance data
+
+        Returns:
+            Dict[int, str] containing raid IDs and their names
+        """
+
+        filt = {'tag': 'META'}
+        col = self.db['attendance_collection']
+        return col.find(filt).distinct('zone_id')
+
+    def getAttendance(self, raid_id: int = None, raid_name: str = None, player_name: str = None):
+        """
+        Pulls attendance data from DB and forms it into a dictionary of AttendanceData objects. Either Raid ID or
+        raid name must be supplied.
+        Args:
+            raid_id (int):
+                ID number of the raid to serach for
+            raid_name (string):
+                Name of the raid to search for
+            player_name (string):
+                Name of the player to search for (optional)
+
+        Returns:
+            Tuple[int, Dict[str, AttendanceData]]:
+                Contains the total amount of raids and the attendance data for each player
+        """
+        assert raid_id is not None or raid_name is not None, "Either raid id or raid name must be supplised"
+
+        col = self.db['attendance_collection']
+
+        if raid_id is not None:
+            filt = {'tag': 'META', 'zone_id': raid_id}
+        else:
+            filt = {'tag': 'META', 'raid_name': raid_name}
+
+        raids = list(col.find(filt))
+        print(f"Found {len(raids)} raids")
+
+        attendances = {}
+        for raid in raids:
+            log_id = raid['log_id']
+            if player_name is None:
+                filt = {'tag': 'PLAYER', 'log_id': log_id}
+            else:
+                filt = {'tag': 'PLAYER', 'log_id': log_id, 'name': player_name}
+            raiders = col.find(filt)
+            for raider in raiders:
+                if raider['name'] not in attendances:
+                    attendances[raider['name']] = AttendanceData(player_name=raider['name'], raid_id=raid_id,
+                                                                 raid_name=raid['raid_name'])
+                att = attendances[raider['name']]
+                att.present_total += 1
+                if raider['benched']:
+                    att.present_benched += 1
+                else:
+                    att.present_active += 1
+
+        return len(raids), attendances
 
 
 if __name__ == "__main__":
