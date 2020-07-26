@@ -459,32 +459,25 @@ class Backend:
 
         attendanceData = self.wclg.getAttendance(token)
 
-        raid_attendees = collections.defaultdict(list)
+        attendance = collections.defaultdict(dict)
         log_amts = collections.defaultdict(int)
-        # get players for each raid and put them in a dictionary as a Dict[raid_id, List[player_name]]
-        # also gather how many logs there are of each raid_id for simplicity
         for raid in attendanceData:
             players = [p['name'] for p in raid['players']]
             raid_id = raid['zone']['id']
-            raid_attendees[raid_id] += players
+            presences = [p['presence'] for p in raid['players']]
+            raid_att = attendance[raid_id]
+            num_logs = log_amts[raid_id]
+            for player, presence in zip(players, presences):
+                if player not in raid_att:
+                    raid_att[player] = [0] * num_logs
+                raid_att[player].append(presence)
+            attendance[raid_id] = raid_att
             log_amts[raid_id] += 1
 
-        # set up arrays for each player
-        attendance = {}
-        for raid_id, players in raid_attendees.items():
-            player_set = set(players) # get unique player names only
-            att_dict: Dict[str, List[int]] = {}
-            for player in player_set:
-                att_dict[player] = np.zeros(log_amts[raid_id])
-            attendance[raid_id] = att_dict
-
-        # pull actual attendance data
-        for i, raid in enumerate(attendanceData):
-            players = [p['name'] for p in raid['players']]
-            presences = [p['presence'] for p in raid['players']]
-            raid_id = raid['zone']['id']
-            for pl, pr in zip(players, presences):
-                attendance[raid_id][pl] = pr
+        for raid_id in attendance:
+            for player in attendance[raid_id]:
+                vals_missing = log_amts[raid_id] - len(attendance[raid_id][player])
+                attendance[raid_id][player] += [0] * vals_missing
 
         return attendance
 
