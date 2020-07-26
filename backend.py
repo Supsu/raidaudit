@@ -1,3 +1,4 @@
+import collections
 import operator
 from dataclasses import dataclass
 
@@ -14,6 +15,7 @@ import csv
 import time
 from dotenv import load_dotenv
 import os
+import numpy as np
 
 from lootitemdata import LootItemData
 
@@ -435,8 +437,18 @@ class Backend:
 
         return True
 
-    def getAttendance(self) -> List:
-        """Gets attendance data from wcl_graphql
+    def getAttendance(self) -> Dict[str, Dict[str, List[int]]]:
+        """Gets attendance data from WCL GraphQL API
+
+        Returns:
+            A Dictionary in the shape of ...
+            {
+                raid_id: {
+                        player_name: [
+                            int
+                        ]
+                    }
+            }
         """
 
         settings = self.db.getSettings()
@@ -447,33 +459,34 @@ class Backend:
 
         attendanceData = self.wclg.getAttendance(token)
 
-        attendance = {}
-        raids = []
-        formattedraids = []
+        raid_attendees = collections.defaultdict(list)
+        log_amts = collections.defaultdict(int)
+        # get players for each raid and put them in a dictionary as a Dict[raid_id, List[player_name]]
+        # also gather how many logs there are of each raid_id for simplicity
         for raid in attendanceData:
-            raids.append((raid["code"], raid["startTime"]))
-            for player in raid["players"]:
-                if player["name"] not in attendance and len(raids)>0:
-                    tmp = {}
-                    for r in raids[:-1]:
-                        tmp[r[0]] = 0
-                    attendance[player["name"]] = tmp
-                attendance[player["name"]][raid["code"]] = str(player["presence"])
+            players = [p['name'] for p in raid['players']]
+            raid_id = raid['zone']['id']
+            raid_attendees[raid_id] += players
+            log_amts[raid_id] += 1
 
-                
+        # set up arrays for each player
+        attendance = {}
+        for raid_id, players in raid_attendees.items():
+            player_set = set(players) # get unique player names only
+            att_dict: Dict[str, List[int]] = {}
+            for player in player_set:
+                att_dict[player] = np.zeros(log_amts[raid_id])
+            attendance[raid_id] = att_dict
 
-        for raid in raids:
-            raidcode = raid[0]
-            for player in attendance:
-                if raidcode not in attendance[player]:
-                    attendance[player][raidcode] = "0"
+        # pull actual attendance data
+        for i, raid in enumerate(attendanceData):
+            players = [p['name'] for p in raid['players']]
+            presences = [p['presence'] for p in raid['players']]
+            raid_id = raid['zone']['id']
+            for pl, pr in zip(players, presences):
+                attendance[raid_id][pl] = pr
 
-        for entry in raids:
-            new1 = time.strftime("%d/%m", time.gmtime(entry[1]))
-            formattedraids.append((entry[0],new1))
-
-        print(formattedraids)
-        return formattedraids, attendance, token
+        return attendance
 
 
 if __name__ == "__main__":
