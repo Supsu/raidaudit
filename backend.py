@@ -473,11 +473,9 @@ class Backend:
                 raid_att[player].append(presence)
             attendance[raid_id] = raid_att
             log_amts[raid_id] += 1
-
-        for raid_id in attendance:
-            for player in attendance[raid_id]:
-                vals_missing = log_amts[raid_id] - len(attendance[raid_id][player])
-                attendance[raid_id][player] += [0] * vals_missing
+            for player in raid_att:
+                vals_missing = log_amts[raid_id] - len(raid_att[player])
+                raid_att[player] += [0]*vals_missing
 
         return attendance
 
