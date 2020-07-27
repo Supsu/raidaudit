@@ -1,3 +1,4 @@
+import collections
 import operator
 from dataclasses import dataclass
 
@@ -435,8 +436,14 @@ class Backend:
 
         return True
 
-    def getAttendance(self) -> List:
-        """Gets attendance data from wcl_graphql
+    def getAttendance(self) -> Dict[str, Dict[str, List[int]]]:
+        """Gets attendance data from WCL GraphQL API
+
+        Returns:
+            headers (list): contains the timestamps for each log in each raid
+            attendance (dict): contains player attendance for each log of each raid
+            token (str): query token
+            percentages (dict): contains player attendance % for each raid
         """
 
         settings = self.db.getSettings()
@@ -447,33 +454,33 @@ class Backend:
 
         attendanceData = self.wclg.getAttendance(token)
 
-        attendance = {}
-        raids = []
-        formattedraids = []
+        attendance = collections.defaultdict(dict)
+        log_amts = collections.defaultdict(int)
+        headers = collections.defaultdict(list)
         for raid in attendanceData:
-            raids.append((raid["code"], raid["startTime"]))
-            for player in raid["players"]:
-                if player["name"] not in attendance and len(raids)>0:
-                    tmp = {}
-                    for r in raids[:-1]:
-                        tmp[r[0]] = 0
-                    attendance[player["name"]] = tmp
-                attendance[player["name"]][raid["code"]] = str(player["presence"])
+            players = [p['name'] for p in raid['players']]
+            raid_id = raid['zone']['id']
+            presences = [p['presence'] for p in raid['players']]
+            raid_att = attendance[raid_id]
+            num_logs = log_amts[raid_id]
+            headers[raid_id].append(time.strftime('%d%m', raid['start_time']))
+            for player, presence in zip(players, presences):
+                if player not in raid_att:
+                    raid_att[player] = [0] * num_logs
+                raid_att[player].append(presence)
+            attendance[raid_id] = raid_att
+            log_amts[raid_id] += 1
+            for player in raid_att:
+                vals_missing = log_amts[raid_id] - len(raid_att[player])
+                raid_att[player] += [0]*vals_missing
 
-                
+        percentages = collections.defaultdict(dict)
+        for raid_id in attendance:
+            for player in attendance[raid_id]:
+                att = attendance[raid_id][player]
+                percentages[raid_id][player] = (att.count(1) + att.count(2)) / len(att)
 
-        for raid in raids:
-            raidcode = raid[0]
-            for player in attendance:
-                if raidcode not in attendance[player]:
-                    attendance[player][raidcode] = "0"
-
-        for entry in raids:
-            new1 = time.strftime("%d/%m", time.gmtime(entry[1]))
-            formattedraids.append((entry[0],new1))
-
-        print(formattedraids)
-        return formattedraids, attendance, token
+        return headers, attendance, token, percentages
 
 
 if __name__ == "__main__":
