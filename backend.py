@@ -479,7 +479,13 @@ class Backend:
                 vals_missing = log_amts[raid_id] - len(raid_att[player])
                 raid_att[player] += [0]*vals_missing
 
-        return headers, attendance, token
+        percentages = collections.defaultdict(dict)
+        for raid_id in attendance:
+            for player in attendance[raid_id]:
+                att = attendance[raid_id][player]
+                percentages[raid_id][player] = (att.count(1) + att.count(2)) / len(att)
+
+        return headers, attendance, token, percentages
 
 
 if __name__ == "__main__":
