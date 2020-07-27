@@ -461,12 +461,14 @@ class Backend:
 
         attendance = collections.defaultdict(dict)
         log_amts = collections.defaultdict(int)
+        headers = collections.defaultdict(list)
         for raid in attendanceData:
             players = [p['name'] for p in raid['players']]
             raid_id = raid['zone']['id']
             presences = [p['presence'] for p in raid['players']]
             raid_att = attendance[raid_id]
             num_logs = log_amts[raid_id]
+            headers[raid_id].append(time.strftime('%d%m', raid['start_time']))
             for player, presence in zip(players, presences):
                 if player not in raid_att:
                     raid_att[player] = [0] * num_logs
@@ -477,7 +479,7 @@ class Backend:
                 vals_missing = log_amts[raid_id] - len(raid_att[player])
                 raid_att[player] += [0]*vals_missing
 
-        return attendance
+        return headers, attendance, token
 
 
 if __name__ == "__main__":
