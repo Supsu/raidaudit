@@ -441,14 +441,10 @@ class Backend:
         """Gets attendance data from WCL GraphQL API
 
         Returns:
-            A Dictionary in the shape of ...
-            {
-                raid_id: {
-                        player_name: [
-                            int
-                        ]
-                    }
-            }
+            headers (list): contains the timestamps for each log in each raid
+            attendance (dict): contains player attendance for each log of each raid
+            token (str): query token
+            percentages (dict): contains player attendance % for each raid
         """
 
         settings = self.db.getSettings()
