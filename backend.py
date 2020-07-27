@@ -15,7 +15,6 @@ import csv
 import time
 from dotenv import load_dotenv
 import os
-import numpy as np
 
 from lootitemdata import LootItemData
 
